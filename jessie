@@ -1,0 +1,55 @@
+#!/bin/bash
+apt-get update
+env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
+[ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
+[ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
+(
+  cd /opt/local/src/dogtag
+  wget https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.dsc
+  wget https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0.orig.tar.xz
+  wget https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.debian.tar.xz
+  dpkg-source -x dogtag-pki_10.2.0-2.dsc
+)
+
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies:")
+
+env DEBIAN_FRONTEND=noninteractive \
+apt-get install -y --force-yes     \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                   build-essential apache2-dev cmake debhelper default-jdk     \
+                   javahelper junit4 libcommons-cli-java libcommons-codec-java \
+                   libcommons-io-java libcommons-lang-java                     \
+                   libidm-console-framework-java libjackson2-annotations-java  \
+                   libjss-java libldap-java libldap2-dev libnspr4-dev          \
+                   libnss3-dev libresteasy-java libservlet3.0-java             \
+                   libsvrcore-dev libtomcat7-java libtomcatjss-java            \
+                   libxalan2-java libxerces2-java pkg-config policycoreutils  \
+                   python-dev velocity dh-systemd libsepol1-dev
+
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/;  debian/rules binary)
+(mv /opt/local/src/dogtag/*.deb /opt/local/pkg/dogtag)
+
+env DEBIAN_FRONTEND=noninteractive \
+apt-get install -y --force-yes     \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                   python-ldap python-lxml python-requests ldap-utils           \
+                   libjackson2-jaxrs-providers-java libjs-jquery                \
+                   libjs-underscore libxml-perl tomcat7-user libnss3-tools      \
+                   python-urllib3  libjackson2-core-java                        \
+                   libjackson2-databind-java libjackson2-dataformat-smile       \
+                   libjackson2-module-jaxb-annotations-java                     \
+                   python-ndg-httpsclient python-openssl python-pyasn1          \
+                   tomcat7-common libxslt1.1 python-cryptography python-cffi    \
+                   python-pycparser python-ply python-ply-yacc-3.2              \
+                   python-ply-lex-3.2 javascript-common
+
+(
+  cd /opt/local/src/dogtag/
+  dpkg -i pki-base
+  dpkg -i pki-console* pki-server* pki-tools*
+  dpkg -i pki-tks* pki-tps* pki-ca* pki-kra* pki-ocsp*
+  dpkg -i dogtag-pki*
+  dpkg -i libsymkey-java* libsymkey-jni* pki-javadoc*
+)
