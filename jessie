@@ -4,6 +4,7 @@
 # vagrant up
 # vagrant ssh
 # sudo su -
+# curl -s https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/jessie | bash
 
 apt-get update
 env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
