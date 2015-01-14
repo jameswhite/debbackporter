@@ -12,10 +12,10 @@ env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Option
 [ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
 (
   cd /opt/local/src/dogtag
-  wget https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.dsc
-  wget https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0.orig.tar.xz
-  wget https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.debian.tar.xz
-  dpkg-source -x dogtag-pki_10.2.0-2.dsc
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.dsc
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0.orig.tar.xz
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.debian.tar.xz
+  dpkg-source -x dogtag-pki_10.2.0-4.dsc
 )
 
 (cd /opt/local/src/dogtag/dogtag-pki-10.2.0/; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies:")
