@@ -5,7 +5,7 @@
 # alias doit='wget -qO precise "https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/precise" ; . precise'
 
 add_packages(){
-    env DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" $*
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" $* || exit 1;
 }
 
 dbuild_prepare(){
@@ -18,10 +18,11 @@ dbuild_prepare(){
 # The build dependency nightmare begins...
 
 dbuild_dogtag(){
+    add_packages libtomcat6-java
     add_packages apache2-dev debhelper default-jdk libcommons-cli-java libcommons-io-java \
                  libcommons-lang-java libidm-console-framework-java libservlet3.0-java \
                  libtomcat7-java libtomcatjss-java libxalan2-java libxerces2-java \
-                 policycoreutils python-dev selinux-policy-dev velocity || exit 1
+                 policycoreutils python-dev selinux-policy-dev velocity
 
     dbuild_apache2-dev
     dbuild_init-system-helpers
