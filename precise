@@ -75,8 +75,8 @@ dbuild_apache2-dev(){
       cd /opt/local/src/apache2-dev
       wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-1ubuntu1.dsc
       wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10.orig.tar.bz2
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-1ubuntu1.debian.tar.xz
-      dpkg-source -x apache2_2.4.10-8ubuntu2.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-1ubuntu1.tar.xz
+      dpkg-source -x apache2_2.4.10-1ubuntu1.dsc
       # wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.dsc
       # wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10.orig.tar.bz2
       # wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.debian.tar.xz
