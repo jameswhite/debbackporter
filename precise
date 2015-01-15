@@ -23,8 +23,9 @@ dbuild_dogtag(){
                  libtomcat7-java libxalan2-java libxerces2-java \
                  policycoreutils python-dev selinux-policy-dev velocity
 
-    dbuild_apache2-dev
-    dbuild_init-system-helpers
+    [ dpkg --compare-versions $(/usr/bin/dpkg-query -W -f='${Version}' dh-systemd) lt 1.14 ] && dbuild_init-system-helpers
+    [ dpkg --compare-versions $(/usr/bin/dpkg-query -W -f='${Version}' apache2-dev) lt 2.4.10 ] && dbuild_apache2-dev
+
     [ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
     [ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
     (
