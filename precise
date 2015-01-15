@@ -197,7 +197,7 @@ dbuild_resteasy(){
 }
 
 dbuild_apache-log4j(){
-    [ ! -d /opt/local/src/apache-log4j ] && mkdir -p /opt/local/src/apache-log4j
+    [ ! -d /opt/local/src/apache-log4j1.2 ] && mkdir -p /opt/local/src/apache-log4j1.2
     (
       cd /opt/local/src/apache-log4j1.2
       wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache-log4j1.2/apache-log4j1.2_1.2.17-4ubuntu3.dsc
