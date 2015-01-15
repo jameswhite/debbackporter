@@ -352,8 +352,6 @@ dbuild_istack-commons(){
 }
 
 dbuild_jcommander(){
-    add_packages libguice-java
-    # libjcommander-java
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/t/testng/testng_6.8.7-2.dsc"
     FILES="testng_6.8.7.orig.tar.xz testng_6.8.7-2.debian.tar.gz"
     NAME='testng'
