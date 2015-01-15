@@ -138,7 +138,6 @@ dbuild_tomcatjss(){
     )
     ( cd /opt/local/src/tomcatjss/tomcatjss-7.1.0; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/tomcatjss/tomcatjss-7.1.0; debian/rules binary && dpkg -i /opt/local/src/tomcatjss/*.deb)
-
 }
 
 dbuild_jackson-annotations(){
@@ -170,6 +169,8 @@ dbuild_maven-debian-helper(){ # >= 1.6.5
 }
 
 dbuild_maven-repo-helper(){ # >= 1.8.5
+    apt-get remove -y maven-debian-helper
+    add_packages python-docutils libxmlunit-java
     [ ! -d /opt/local/src/maven-repo-helper ] && mkdir -p /opt/local/src/maven-repo-helper
     (
       cd /opt/local/src/maven-repo-helper
