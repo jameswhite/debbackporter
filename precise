@@ -233,8 +233,8 @@ dbuild_scannotation(){
       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/s/scannotation/scannotation_1.0.2+svn20110812-1.debian.tar.xz
       dpkg-source -x scannotation_1.0.2+svn20110812-1.dsc
     )
-    ( cd /opt/local/src/scannotation/scannotation-1.0.2; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/scannotation/scannotation-1.0.2; debian/rules binary && dpkg -i /opt/local/src/scannotation/*.deb)
+    ( cd /opt/local/src/scannotation/scannotation-1.0.2+svn20110812; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/scannotation/scannotation-1.0.2+svn20110812; debian/rules binary && dpkg -i /opt/local/src/scannotation/*.deb )
 }
 
 # libyaml-snake-java
