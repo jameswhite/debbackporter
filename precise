@@ -289,12 +289,31 @@ dbuild_javatools(){
       ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
 
-
 dbuild_libcodemodel-java(){
+    add-packages ant-doc
+    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/libc/libcodemodel-java/libcodemodel-java_2.6-1.dsc"
+    FILES="libcodemodel-java_2.6.orig.tar.xz libcodemodel-java_2.6-1.debian.tar.xz"
     NAME='libcodemodel-java'
     VERSION='2.6'
-    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/libc/libcodemodel-java/libcodemodel-java_2.6-1.dsc"
-    FILES=" libcodemodel-java_2.6.orig.tar.xz libcodemodel-java_2.6-1.debian.tar.xz"
+    SUFFIX=''
+    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+    (
+      cd /opt/local/src/${NAME}
+      wget -nc ${DSC_URL}
+      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+      dpkg-source -x ${DSC_FILE}
+    )
+    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+}
+
+dbuild_dtd-parser(){
+    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/d/dtd-parser/dtd-parser_1.2~svn20110404-1.dsc"
+    FILES="dtd-parser_1.2~svn20110404.orig.tar.xz dtd-parser_1.2~svn20110404-1.debian.tar.xz"
+    NAME='dtd-parser'
+    VERSION='1.2'
     SUFFIX=''
     URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
     DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
