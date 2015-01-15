@@ -135,7 +135,7 @@ dbuild_tomcatjss(){
       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0-0ubuntu1.dsc
       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0.orig.tar.gz
       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0-0ubuntu1.debian.tar.gz
-      dpkg-source tomcatjss_7.1.0-0ubuntu1.dsc
+      dpkg-source -x tomcatjss_7.1.0-0ubuntu1.dsc
     )
     ( cd /opt/local/src/tomcatjss/tomcatjss-7.1.0; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/tomcatjss/tomcatjss-7.1.0; debian/rules binary && dpkg -i /opt/local/src/tomcatjss/*.deb)
