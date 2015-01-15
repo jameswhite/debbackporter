@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # vagrant init precise http://files.vagrantup.com/precise64.box && vagrant up && vagrant ssh
 # sudo su -
 # alias doit='wget -qO precise "https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/precise" ; . precise'
