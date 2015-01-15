@@ -13,6 +13,7 @@ dbuild_prepare(){
     env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
     add_packages dpkg-dev debhelper javahelper po4a dh-autoreconf libbz2-dev liblzma-dev libselinux-dev cmake libnspr4-dev \
                  libnss3-dev openjdk-7-jdk libsvrcore-dev junit junit4 libjss-java libldap-java libcommons-codec-java | tee build-deps-deps-precise
+    update-java-alternatives -s java-1.7.0-openjdk-amd64
 }
 
 # The build dependency nightmare begins...
@@ -125,6 +126,20 @@ dbuild_apr-util(){ # >= 1.5.0
     )
     ( cd /opt/local/src/apr-util/apr-util-1.5.4; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/apr-util/apr-util-1.5.4; debian/rules binary && dpkg -i /opt/local/src/apr-util/*.deb)
+}
+
+dbuild_tomcatjss(){
+    [ ! -d /opt/local/src/tomcatjss ] && mkdir -p /opt/local/src/tomcatjss
+    (
+      cd /opt/local/src/tomcatjss
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0-0ubuntu1.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0.orig.tar.gz
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0-0ubuntu1.debian.tar.gz
+      dpkg-source tomcatjss_7.1.0-0ubuntu1.dsc
+    )
+    ( cd /opt/local/src/tomcatjss/tomcatjss-7.1.0; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/tomcatjss/tomcatjss-7.1.0; debian/rules binary && dpkg -i /opt/local/src/tomcatjss/*.deb)
+
 }
 
 # + dogtag
