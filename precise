@@ -197,6 +197,7 @@ dbuild_resteasy(){
 }
 
 dbuild_apache-log4j(){
+    add_packages libgnumail-java
     [ ! -d /opt/local/src/apache-log4j1.2 ] && mkdir -p /opt/local/src/apache-log4j1.2
     (
       cd /opt/local/src/apache-log4j1.2
@@ -209,42 +210,19 @@ dbuild_apache-log4j(){
       ( cd /opt/local/src/apache-log4j1.2/apache-log4j1.2-1.2.17; debian/rules binary && dpkg -i /opt/local/src/apache-log4j1.2/*.deb)
 }
 
-# libjaxb-java
+dbuild_jaxb(){
+    [ ! -d /opt/local/src/jaxb ] && mkdir -p /opt/local/src/jaxb
+    (
+      cd /opt/local/src/jaxb
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5.orig.tar.xz
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.debian.tar.xz
+      dpkg-source -x jaxb_2.2.5-1.dsc
+    )
+    ( cd /opt/local/src/jaxb/jaxb-2.2.5; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/jaxb/jaxb-2.2.5; debian/rules binary && dpkg -i /opt/local/src/jaxb/*.deb)
+}
+
 # libscannotation-java
 # libyaml-snake-java
 
-# + dogtag
-#     + apache2-dev (one with Debian/Debhelper/Sequence/systemd.pm, so we grab 2.4.10-9)
-#         + debhelper (>= 9.20131213~)
-#           + libaprutil1-dev (>= 1.5.0)
-#           + libapr1-dev (>= 1.5.0)
-#           + libpcre3-dev
-#           + liblua5.1-0-dev
-#           + libxml2-dev
-#     + default-jdk
-#     + dh-systemd
-#     + javahelper
-#     + junit4
-#     + libcommons-cli-java
-#     + libcommons-codec-java
-#     + libcommons-io-java
-#     + libcommons-lang-java
-#     + libidm-console-framework-java
-#     + libjackson2-annotations-java
-#     + libjss-java
-#     + libldap-java
-#     + libldap2-dev
-#     + libnspr4-dev
-#     + libnss3-dev
-#     + libresteasy-java
-#     + libservlet3.0-java
-#     + libsvrcore-dev
-#     + libtomcat7-java
-#     + libtomcatjss-java (>= 7.1.0)
-#     + libxalan2-java
-#     + libxerces2-java
-#     + pkg-config
-#     + policycoreutils
-#     + python-dev
-#     + selinux-policy-dev
-#     + velocity
