@@ -183,6 +183,7 @@ dbuild_maven-repo-helper(){ # >= 1.8.5
 }
 
 dbuild_resteasy(){
+    add_packages glassfish-activation glassfish-javaee libjackson-json-java libjettison-java
     [ ! -d /opt/local/src/resteasy ] && mkdir -p /opt/local/src/resteasy
     (
       cd /opt/local/src/resteasy
@@ -194,6 +195,23 @@ dbuild_resteasy(){
     ( cd /opt/local/src/resteasy/resteasy-3.0.6; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/resteasy/resteasy-3.0.6; debian/rules binary && dpkg -i /opt/local/src/resteasy/*.deb)
 }
+
+dbuild_apache-log4j(){
+    [ ! -d /opt/local/src/apache-log4j ] && mkdir -p /opt/local/src/apache-log4j
+    (
+      cd /opt/local/src/apache-log4j1.2
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache-log4j1.2/apache-log4j1.2_1.2.17-4ubuntu3.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache-log4j1.2/apache-log4j1.2_1.2.17.orig.tar.gz
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache-log4j1.2/apache-log4j1.2_1.2.17-4ubuntu3.debian.tar.gz
+      dpkg-source -x apache-log4j1.2_1.2.17-4ubuntu3.dsc
+    )
+    ( cd /opt/local/src/apache-log4j1.2/apache-log4j1.2-1.2.17; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/apache-log4j1.2/apache-log4j1.2-1.2.17; debian/rules binary && dpkg -i /opt/local/src/apache-log4j1.2/*.deb)
+}
+
+# libjaxb-java
+# libscannotation-java
+# libyaml-snake-java
 
 # + dogtag
 #     + apache2-dev (one with Debian/Debhelper/Sequence/systemd.pm, so we grab 2.4.10-9)
