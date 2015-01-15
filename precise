@@ -21,9 +21,10 @@ dbuild_dogtag(){
     add_packages apache2-dev debhelper default-jdk libcommons-cli-java libcommons-io-java \
                  libcommons-lang-java libidm-console-framework-java libservlet3.0-java \
                  libtomcat7-java libtomcatjss-java libxalan2-java libxerces2-java \
-                 policycoreutils python-dev selinux-policy-dev velocity
+                 policycoreutils python-dev selinux-policy-dev velocity || exit 1
 
     dbuild_apache2-dev
+    dbuild_init-system-helpers
     [ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
     [ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
     (
