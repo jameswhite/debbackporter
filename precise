@@ -18,13 +18,14 @@ dbuild_prepare(){
 # The build dependency nightmare begins...
 
 dbuild_dogtag(){
+    dbuild_prepare
     add_packages apache2-dev debhelper default-jdk libcommons-cli-java libcommons-io-java \
                  libcommons-lang-java libidm-console-framework-java libservlet3.0-java \
                  libtomcat7-java libxalan2-java libxerces2-java \
                  policycoreutils python-dev selinux-policy-dev velocity
 
     dpkg --compare-versions $(/usr/bin/dpkg-query -W -f='${Version}' dh-systemd) lt 1.14 && dbuild_init-system-helpers
-    dpkg --compare-versions $(/usr/bin/dpkg-query -W -f='${Version}' apache2-dev) lt 2.4.10 && dbuild_apache2-dev
+    dpkg  -l | grep "ii *apache2-dev" || dbuild_apache2-dev
 
     [ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
     [ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
@@ -72,9 +73,12 @@ dbuild_apache2-dev(){
     [ ! -d /opt/local/src/apache2-dev ] && mkdir -p /opt/local/src/apache2-dev
     (
       cd /opt/local/src/apache2-dev
-      wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.dsc
-      wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10.orig.tar.bz2
-      wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.debian.tar.xz
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-8ubuntu2.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10.orig.tar.bz2
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-8ubuntu2.debian.tar.xz
+      # wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.dsc
+      # wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10.orig.tar.bz2
+      # wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.debian.tar.xz
       dpkg-source -x apache2_2.4.10-9.dsc
     )
     ( cd /opt/local/src/apache2-dev/apache2-2.4.10; dpkg-checkbuilddeps 2>&1 | grep . ) || \
