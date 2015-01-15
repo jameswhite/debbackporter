@@ -351,7 +351,9 @@ dbuild_istack-commons(){
       ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
 
-dbuild_testng(){
+dbuild_jcommander(){
+    add_packages libguice-java
+    # libjcommander-java
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/t/testng/testng_6.8.7-2.dsc"
     FILES="testng_6.8.7.orig.tar.xz testng_6.8.7-2.debian.tar.gz"
     NAME='testng'
@@ -371,7 +373,25 @@ dbuild_testng(){
       ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
 
+dbuild_jcommander(){
+    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/j/jcommander/jcommander_1.32-1.dsc"
+    FILES="jcommander_1.32.orig.tar.gz jcommander_1.32-1.debian.tar.gz"
+    NAME='jcommander'
+    VERSION='1.32'
+    SUFFIX=''
 
+    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+    (
+      cd /opt/local/src/${NAME}
+      wget -nc ${DSC_URL}
+      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+      dpkg-source -x ${DSC_FILE}
+    )
+    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+}
 
 
 dbuild_fastinfoset(){
