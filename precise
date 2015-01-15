@@ -210,21 +210,22 @@ dbuild_apache-log4j(){
       ( cd /opt/local/src/apache-log4j1.2/apache-log4j1.2-1.2.17; debian/rules binary && dpkg -i /opt/local/src/apache-log4j1.2/*.deb)
 }
 
-dbuild_jaxb(){
-    add_packages libargs4j-java libisorelax-java libjing-java libmsv-java
-    [ ! -d /opt/local/src/jaxb ] && mkdir -p /opt/local/src/jaxb
+dbuild_snakeyaml(){
+    [ ! -d /opt/local/src/snakeyaml ] && mkdir -p /opt/local/src/snakeyaml
     (
-      cd /opt/local/src/jaxb
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.dsc
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5.orig.tar.xz
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.debian.tar.xz
-      dpkg-source -x jaxb_2.2.5-1.dsc
+      cd /opt/local/src/snakeyaml
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/s/snakeyaml/snakeyaml_1.12-2.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/s/snakeyaml/snakeyaml_1.12.orig.tar.gz
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/s/snakeyaml/snakeyaml_1.12-2.debian.tar.gz
+      dpkg-source -x snakeyaml_1.12-2.dsc
     )
-    ( cd /opt/local/src/jaxb/jaxb-2.2.5; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/jaxb/jaxb-2.2.5; debian/rules binary && dpkg -i /opt/local/src/jaxb/*.deb)
+    ( cd /opt/local/src/snakeyaml/snakeyaml-1.12; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/snakeyaml/snakeyaml-1.12; debian/rules binary && dpkg -i /opt/local/src/snakeyaml/*.deb)
 }
 
+# why does this one not build?
 dbuild_scannotation(){
+    add_packages libjavassist-java
     [ ! -d /opt/local/src/scannotation ] && mkdir -p /opt/local/src/scannotation
     (
       cd /opt/local/src/scannotation
@@ -237,11 +238,19 @@ dbuild_scannotation(){
       ( cd /opt/local/src/scannotation/scannotation-1.0.2+svn20110812; debian/rules binary && dpkg -i /opt/local/src/scannotation/*.deb )
 }
 
-# libyaml-snake-java
 
-
-
-
+dbuild_jaxb(){
+    add_packages libargs4j-java libisorelax-java libjing-java libmsv-java
+    [ ! -d /opt/local/src/jaxb ] && mkdir -p /opt/local/src/jaxb
+    (
+      cd /opt/local/src/jaxb
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5.orig.tar.xz
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.debian.tar.xz
+      dpkg-source -x jaxb_2.2.5-1.dsc
+    )
+    ( cd /opt/local/src/jaxb/jaxb-2.2.5; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/jaxb/jaxb-2.2.5; debian/rules binary && dpkg -i /opt/local/src/jaxb/*.deb)
 # libtxw2-java # >= 0.1+20110809
 # libcodemodel-java # >= 2.6
 # javahelper # >= 0.43
@@ -250,3 +259,5 @@ dbuild_scannotation(){
 # libfastinfoset-java
 # libistack-commons-java
 # libjaxb-api-java
+}
+
