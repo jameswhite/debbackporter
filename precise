@@ -108,8 +108,8 @@ dbuild_apr(){ # >= 1.5.0
       wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apr/apr_1.5.1-3.debian.tar.xz
       dpkg-source -x apr_1.5.1-3.dsc
     )
-    ( cd /opt/local/src/apr/apr_1.5.1; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/apr/apr_1.5.1; debian/rules binary && dpkg -i /opt/local/src/apr/*.deb)
+    ( cd /opt/local/src/apr/apr-1.5.1; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/apr/apr-1.5.1; debian/rules binary && dpkg -i /opt/local/src/apr/*.deb)
 }
 
 dbuild_apr-util(){ # >= 1.5.0
@@ -121,8 +121,8 @@ dbuild_apr-util(){ # >= 1.5.0
       wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apr-util/apr-util_1.5.4-1.debian.tar.xz
       dpkg-source -x apr-util_1.5.4-1.dsc
     )
-    ( cd /opt/local/src/apr-util/apr-util_1.5.4; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/apr-util/apr-util_1.5.4; debian/rules binary && dpkg -i /opt/local/src/apr-util/*.deb)
+    ( cd /opt/local/src/apr-util/apr-util-1.5.4; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/apr-util/apr-util-1.5.4; debian/rules binary && dpkg -i /opt/local/src/apr-util/*.deb)
 }
 
 # + dogtag
