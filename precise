@@ -150,8 +150,8 @@ dbuild_jackson-annotations(){
       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-annotations/jackson-annotations_2.2.2-1.debian.tar.gz
       dpkg-source -x jackson-annotations_2.2.2-1.dsc
     )
-    ( cd /opt/local/src/jackon-annotations/jackon-annotations-2.2.2; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/jackon-annotations/jackon-annotations-2.2.2; debian/rules binary && dpkg -i /opt/local/src/jackon-annotations/*.deb)
+    ( cd /opt/local/src/jackson-annotations/jackson-annotations-2.2.2; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/jackson-annotations/jackson-annotations-2.2.2; debian/rules binary && dpkg -i /opt/local/src/jackson-annotations/*.deb)
 }
 
 # + dogtag
