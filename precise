@@ -1,0 +1,130 @@
+#!/bin/bash
+
+# vagrant init precise http://files.vagrantup.com/precise64.box && vagrant up && vagrant ssh
+# sudo su -
+# curl -s https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/precise | bash
+
+dbuild_prepare(){
+    apt-get update
+    env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
+    env DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --force-yes     \
+                    -o Dpkg::Options::="--force-confdef" \
+                    -o Dpkg::Options::="--force-confold" \
+                    dpkg-dev debhelper javahelper po4a dh-autoreconf libbz2-dev liblzma-dev libselinux-dev cmake libnspr4-dev \
+                    libnss3-dev openjdk-7-jdk libsvrcore-dev junit junit4 libjss-java libldap-java libcommons-codec-java | tee build-deps-deps-precise
+}
+
+# The build dependency nightmare begins...
+
+dbuild_dogtag(){
+    env DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --force-yes     \
+                    -o Dpkg::Options::="--force-confdef" \
+                    -o Dpkg::Options::="--force-confold" \
+                       apache2-dev debhelper default-jdk libcommons-cli-java libcommons-io-java \
+                      libcommons-lang-java libidm-console-framework-java libservlet3.0-java \
+                      libtomcat7-java libtomcatjss-java libxalan2-java libxerces2-java \
+                      policycoreutils python-dev selinux-policy-dev velocity
+
+    [ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
+    [ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
+    (
+      cd /opt/local/src/dogtag
+      wget -nc https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.dsc
+      wget -nc https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0.orig.tar.xz
+      wget -nc https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.debian.tar.xz
+      dpkg-source -x dogtag-pki_10.2.0-2.dsc
+      (cd dogtag-pki-10.2.0; dpkg-checkbuilddeps 2>&1 | grep .) || \
+        ( cd dogtag-pki-10.2.0; debian/rules binary && mv /opt/local/src/dogtag/*.deb /opt/local/pkg/dogtag )
+    )
+}
+
+dbuild_dpkg(){ # (>= 1.17)
+    [ ! -d /opt/local/src/dpkg ] && mkdir -p /opt/local/src/dpkg
+    (
+      cd /opt/local/src/dpkg
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.5ubuntu5.3.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.5ubuntu5.3.tar.xz
+      dpkg-source -x dpkg_1.17.5ubuntu5.3.dsc
+    )
+    ( cd /opt/local/src/dpkg/dpkg-1.17.5ubuntu5.3;  dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/dpkg/dpkg-1.17.5ubuntu5.3; debian/rules binary && dpkg -i /opt/local/src/dpkg/*.deb )
+}
+
+dbuild_debhelper(){
+    dbuild_dpkg
+    [ ! -d /opt/local/src/debhelper ] && mkdir -p /opt/local/src/debhelper
+    (
+      cd /opt/local/src/debhelper
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/debhelper/debhelper_9.20131227ubuntu1.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/debhelper/debhelper_9.20131227ubuntu1.tar.gz
+      dpkg-source -x debhelper_9.20131227ubuntu1.dsc
+      (cd debhelper-9.20131227ubuntu1/; dpkg-checkbuilddeps 2>&1 | grep .) || \
+        (cd debhelper-9.20131227ubuntu1/; debian/rules binary && dpkg -i /opt/local/src/debhelper/debhelper_9.20131227ubuntu1_all.deb )
+    )
+}
+
+dbuild_apache2-dev(){
+    apt-get install -y debhelper libaprutil1-dev libapr1-dev libpcre3-dev liblua5.1-0-dev libxml2-dev
+    dbuild_debhelper
+    [ ! -d /opt/local/src/apache2-dev ] && mkdir -p /opt/local/src/apache2-dev
+    (
+      cd /opt/local/src/apache2-dev
+      wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.dsc
+      wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10.orig.tar.bz2
+      wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.debian.tar.xz
+      dpkg-source -x apache2_2.4.10-9.dsc
+    )
+    ( cd /opt/local/src/apache2-dev/apache2-2.4.10; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/apache2-dev/apache2-2.4.10; debian/rules binary && dpkg -i /opt/local/src/apache2-dev/apache2-dev_2.4.10-9_amd64.deb )
+}
+
+dbuild_init-system-helpers(){
+    [ ! -d /opt/local/src/init-system-helpers ] && mkdir -p /opt/local/src/init-system-helpers
+    (
+      cd /opt/local/src/init-system-helpers
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/i/init-system-helpers/init-system-helpers_1.14.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/i/init-system-helpers/init-system-helpers_1.14.tar.gz
+      dpkg-source -x init-system-helpers_1.14.dsc
+    )
+    ( cd /opt/local/src/init-system-helpers/init-system-helpers-1.14; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+        ( cd /opt/local/src/init-system-helpers/init-system-helpers-1.14; dpkg -i /opt/local/src/init-system-helpers/dh-systemd_1.14_all.deb )
+}
+
+# + dogtag
+#     + apache2-dev (one with Debian/Debhelper/Sequence/systemd.pm, so we grab 2.4.10-9)
+#         + debhelper (>= 9.20131213~)
+#           + libaprutil1-dev (>= 1.5.0)
+#           + libapr1-dev (>= 1.5.0)
+#           + libpcre3-dev
+#           + liblua5.1-0-dev
+#           + libxml2-dev
+#     + default-jdk
+#     + dh-systemd
+#     + javahelper
+#     + junit4
+#     + libcommons-cli-java
+#     + libcommons-codec-java
+#     + libcommons-io-java
+#     + libcommons-lang-java
+#     + libidm-console-framework-java
+#     + libjackson2-annotations-java
+#     + libjss-java
+#     + libldap-java
+#     + libldap2-dev
+#     + libnspr4-dev
+#     + libnss3-dev
+#     + libresteasy-java
+#     + libservlet3.0-java
+#     + libsvrcore-dev
+#     + libtomcat7-java
+#     + libtomcatjss-java (>= 7.1.0)
+#     + libxalan2-java
+#     + libxerces2-java
+#     + pkg-config
+#     + policycoreutils
+#     + python-dev
+#     + selinux-policy-dev
+#     + velocity
+#         + ant libcommons-collections3-java libcommons-logging-java libexcalibur-logkit-java libjdom1-java liblog4j1.2-java libservlet2.5-java libwerken.xpath-java liboro-java
