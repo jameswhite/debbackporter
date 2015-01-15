@@ -40,17 +40,17 @@ dbuild_dogtag(){
     )
 }
 
-dbuild_dpkg(){ # (>= 1.17.15)
+dbuild_dpkg(){ # (>= 1.17)
     add_packages debhelper flex libncursesw5-dev
     [ ! -d /opt/local/src/dpkg ] && mkdir -p /opt/local/src/dpkg
     (
       cd /opt/local/src/dpkg
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.21ubuntu2.dsc
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.21ubuntu2.tar.xz
-      dpkg-source -x dpkg_1.17.21ubuntu2.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.5ubuntu5.3.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.5ubuntu5.3.tar.xz
+      dpkg-source -x dpkg_1.17.5ubuntu5.3.dsc
     )
-    ( cd /opt/local/src/dpkg/dpkg-1.17.21ubuntu2;  dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/dpkg/dpkg-1.17.21ubuntu2; debian/rules binary && dpkg -i /opt/local/src/dpkg/*.deb )
+    ( cd /opt/local/src/dpkg/dpkg-1.17.5ubuntu5.3;  dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/dpkg/dpkg-1.17.5ubuntu5.3; debian/rules binary && dpkg -i /opt/local/src/dpkg/*.deb )
 }
 
 dbuild_debhelper(){
@@ -73,9 +73,9 @@ dbuild_apache2-dev(){
     [ ! -d /opt/local/src/apache2-dev ] && mkdir -p /opt/local/src/apache2-dev
     (
       cd /opt/local/src/apache2-dev
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-8ubuntu2.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-1ubuntu1.dsc
       wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10.orig.tar.bz2
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-8ubuntu2.debian.tar.xz
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-1ubuntu1.debian.tar.xz
       dpkg-source -x apache2_2.4.10-8ubuntu2.dsc
       # wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10-9.dsc
       # wget -nc http://ftp.de.debian.org/debian/pool/main/a/apache2/apache2_2.4.10.orig.tar.bz2
@@ -83,7 +83,7 @@ dbuild_apache2-dev(){
       # dpkg-source -x apache2_2.4.10-9.dsc
     )
     ( cd /opt/local/src/apache2-dev/apache2-2.4.10; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/apache2-dev/apache2-2.4.10; debian/rules binary && dpkg -i /opt/local/src/apache2-dev/apache2-dev_2.4.10-9_amd64.deb )
+      ( cd /opt/local/src/apache2-dev/apache2-2.4.10; debian/rules binary && dpkg -i /opt/local/src/apache2-dev/apache2-dev*.deb )
 }
 
 dbuild_init-system-helpers(){
