@@ -330,6 +330,8 @@ dbuild_dtd-parser(){
 }
 
 dbuild_istack-commons(){
+    add_packages libbuild-helper-maven-plugin-java
+    # testng # >= 6
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/i/istack-commons/istack-commons_2.17-1.dsc"
     FILES="istack-commons_2.17.orig.tar.xz istack-commons_2.17-1.debian.tar.xz"
     NAME='istack-commons'
@@ -348,9 +350,31 @@ dbuild_istack-commons(){
     ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
+
+dbuild_testng(){
+    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/t/testng/testng_6.8.7-2.dsc"
+    FILES="testng_6.8.7.orig.tar.xz testng_6.8.7-2.debian.tar.gz"
+    NAME='testng'
+    VERSION='6.8.7'
+    SUFFIX=''
+
+    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+    (
+      cd /opt/local/src/${NAME}
+      wget -nc ${DSC_URL}
+      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+      dpkg-source -x ${DSC_FILE}
+    )
+    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+}
+
+
+
+
 dbuild_fastinfoset(){
-    # libstreambuffer-java
-    # libxsom-java
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/f/fastinfoset/fastinfoset_1.2.12-1.dsc"
     FILES="fastinfoset_1.2.12.orig.tar.xz fastinfoset_1.2.12-1.debian.tar.xz"
     NAME='fastinfoset'
