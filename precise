@@ -156,6 +156,8 @@ dbuild_jackson-annotations(){
 }
 
 dbuild_maven-debian-helper(){ # >= 1.6.5
+    add_packages cdbs maven-ant-helper help2man maven-repo-helper libmaven-plugin-tools-java
+    dbuild_maven-repo-helper
     [ ! -d /opt/local/src/maven-debian-helper ] && mkdir -p /opt/local/src/maven-debian-helper
     (
       cd /opt/local/src/maven-debian-helper
@@ -165,6 +167,18 @@ dbuild_maven-debian-helper(){ # >= 1.6.5
     )
     ( cd /opt/local/src/maven-debian-helper/maven-debian-helper-1.6.6; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/maven-debian-helper/maven-debian-helper-1.6.6; debian/rules binary && dpkg -i /opt/local/src/maven-debian-helper/*.deb)
+}
+
+dbuild_maven-repo-helper(){ # >= 1.8.5
+    [ ! -d /opt/local/src/maven-repo-helper ] && mkdir -p /opt/local/src/maven-repo-helper
+    (
+      cd /opt/local/src/maven-repo-helper
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/m/maven-repo-helper/maven-repo-helper_1.8.5.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/m/maven-repo-helper/maven-repo-helper_1.8.5.tar.gz
+      dpkg-source -x maven-repo-helper_1.8.5.dsc
+    )
+    ( cd /opt/local/src/maven-repo-helper/maven-repo-helper-1.8.5; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/maven-repo-helper/maven-repo-helper-1.8.5; debian/rules binary && dpkg -i /opt/local/src/maven-repo-helper/*.deb)
 }
 
 # + dogtag
