@@ -330,12 +330,42 @@ dbuild_dtd-parser(){
 }
 
 dbuild_istack-commons(){
-    add_packages libbuild-helper-maven-plugin-java
-    # testng # >= 6
-    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/i/istack-commons/istack-commons_2.17-1.dsc"
-    FILES="istack-commons_2.17.orig.tar.xz istack-commons_2.17-1.debian.tar.xz"
-    NAME='istack-commons'
-    VERSION='2.17'
+# [ERROR] BUILD FAILURE
+# [INFO] ------------------------------------------------------------------------
+# [INFO] TestNG support requires version 4.7 or above. You have declared version 6.x
+# [INFO] ------------------------------------------------------------------------
+
+wget http://mirrors.kernel.org/ubuntu/pool/universe/i/istack-commons/libistack-commons-java_2.17-1_all.deb
+dpkg -i libistack-commons-java_2.17-1_all.deb
+
+# libargs4j-java # >= 2.0.25
+
+#    add_packages libbuild-helper-maven-plugin-java
+#    # testng # >= 6
+#    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/i/istack-commons/istack-commons_2.17-1.dsc"
+#    FILES="istack-commons_2.17.orig.tar.xz istack-commons_2.17-1.debian.tar.xz"
+#    NAME='istack-commons'
+#    VERSION='2.17'
+#    SUFFIX=''
+#
+#    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+#    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+#    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+#    (
+#      cd /opt/local/src/${NAME}
+#      wget -nc ${DSC_URL}
+#      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+#      dpkg-source -x ${DSC_FILE}
+#    )
+#    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+#      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+}
+
+dbuild_args4j(){ # > 2.0.25
+    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/a/args4j/args4j_2.0.25-1.dsc"
+    FILES="args4j_2.0.25.orig.tar.gz args4j_2.0.25-1.debian.tar.gz"
+    NAME='args4j'
+    VERSION='2.0.25'
     SUFFIX=''
 
     URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
