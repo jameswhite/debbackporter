@@ -142,6 +142,7 @@ dbuild_tomcatjss(){
 }
 
 dbuild_jackson-annotations(){
+    add_packages maven-debian-helper default-jdk-doc libmaven-javadoc-plugin-java
     [ ! -d /opt/local/src/jackson-annotations ] && mkdir -p /opt/local/src/jackson-annotations
     (
       cd /opt/local/src/jackson-annotations
