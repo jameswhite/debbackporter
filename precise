@@ -155,6 +155,18 @@ dbuild_jackson-annotations(){
       ( cd /opt/local/src/jackson-annotations/jackson-annotations-2.2.2; debian/rules binary && dpkg -i /opt/local/src/jackson-annotations/*.deb)
 }
 
+dbuild_maven-debian-helper(){ # >= 1.6.5
+    [ ! -d /opt/local/src/maven-debian-helper ] && mkdir -p /opt/local/src/maven-debian-helper
+    (
+      cd /opt/local/src/maven-debian-helper
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/m/maven-debian-helper/maven-debian-helper_1.6.6.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/m/maven-debian-helper/maven-debian-helper_1.6.6.tar.gz
+      dpkg-source -x maven-debian-helper_1.6.6.dsc
+    )
+    ( cd /opt/local/src/maven-debian-helper/maven-debian-helper-1.6.6; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/maven-debian-helper/maven-debian-helper-1.6.6; debian/rules binary && dpkg -i /opt/local/src/maven-debian-helper/*.deb)
+}
+
 # + dogtag
 #     + apache2-dev (one with Debian/Debhelper/Sequence/systemd.pm, so we grab 2.4.10-9)
 #         + debhelper (>= 9.20131213~)
