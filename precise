@@ -46,7 +46,7 @@ dbuild_dpkg(){ # (>= 1.17.15)
     (
       cd /opt/local/src/dpkg
       wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.21ubuntu2.dsc
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.21ubuntu2.tar.xzk
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.21ubuntu2.tar.xz
       dpkg-source -x dpkg_1.17.21ubuntu2.dsc
     )
     ( cd /opt/local/src/dpkg/dpkg-1.17.21ubuntu2;  dpkg-checkbuilddeps 2>&1 | grep . ) || \
