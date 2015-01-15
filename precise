@@ -142,6 +142,19 @@ dbuild_tomcatjss(){
 
 }
 
+dbuild_jackson-annotations(){
+    [ ! -d /opt/local/src/jackson-annotations ] && mkdir -p /opt/local/src/jackson-annotations
+    (
+      cd /opt/local/src/jackson-annotations
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-annotations/jackson-annotations_2.2.2-1.dsc
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-annotations/jackson-annotations_2.2.2.orig.tar.gz
+      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-annotations/jackson-annotations_2.2.2-1.debian.tar.gz
+      dpkg-source -x jackson-annotations_2.2.2-1.dsc
+    )
+    ( cd /opt/local/src/jackon-annotations/jackon-annotations-2.2.2; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/jackon-annotations/jackon-annotations-2.2.2; debian/rules binary && dpkg -i /opt/local/src/jackon-annotations/*.deb)
+}
+
 # + dogtag
 #     + apache2-dev (one with Debian/Debhelper/Sequence/systemd.pm, so we grab 2.4.10-9)
 #         + debhelper (>= 9.20131213~)
@@ -177,4 +190,3 @@ dbuild_tomcatjss(){
 #     + python-dev
 #     + selinux-policy-dev
 #     + velocity
-#         + ant libcommons-collections3-java libcommons-logging-java libexcalibur-logkit-java libjdom1-java liblog4j1.2-java libservlet2.5-java libwerken.xpath-java liboro-java
