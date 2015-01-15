@@ -314,7 +314,7 @@ dbuild_dtd-parser(){
     FILES="dtd-parser_1.2~svn20110404.orig.tar.xz dtd-parser_1.2~svn20110404-1.debian.tar.xz"
     NAME='dtd-parser'
     VERSION='1.2'
-    SUFFIX='~svn2011040'
+    SUFFIX='~svn20110404'
     URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
     DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
     [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
