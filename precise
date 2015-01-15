@@ -89,7 +89,7 @@ dbuild_init-system-helpers(){
       dpkg-source -x init-system-helpers_1.14.dsc
     )
     ( cd /opt/local/src/init-system-helpers/init-system-helpers-1.14; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-        ( cd /opt/local/src/init-system-helpers/init-system-helpers-1.14; dpkg -i /opt/local/src/init-system-helpers/dh-systemd_1.14_all.deb )
+        ( cd /opt/local/src/init-system-helpers/init-system-helpers-1.14; debian/rules binary && dpkg -i /opt/local/src/init-system-helpers/dh-systemd_1.14_all.deb )
 }
 
 # + dogtag
