@@ -23,6 +23,7 @@ dbuild_dogtag(){
                  libtomcat7-java libtomcatjss-java libxalan2-java libxerces2-java \
                  policycoreutils python-dev selinux-policy-dev velocity
 
+    dbuild_apache2-dev
     [ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
     [ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
     (
@@ -50,7 +51,7 @@ dbuild_dpkg(){ # (>= 1.17)
 }
 
 dbuild_debhelper(){
-    dbuild_dpkg
+    [ dpkg --compare-versions $(/usr/bin/dpkg-query -W -f='${Version}' dpkg) lt 1.17 ] && dbuild_dpkg
     [ ! -d /opt/local/src/debhelper ] && mkdir -p /opt/local/src/debhelper
     (
       cd /opt/local/src/debhelper
@@ -64,7 +65,8 @@ dbuild_debhelper(){
 
 dbuild_apache2-dev(){
     apt-get install -y debhelper libaprutil1-dev libapr1-dev libpcre3-dev liblua5.1-0-dev libxml2-dev
-    dbuild_debhelper
+    [ dpkg --compare-versions $(/usr/bin/dpkg-query -W -f='${Version}' debhelper) lt 9 ] && dbuild_debhelper
+
     [ ! -d /opt/local/src/apache2-dev ] && mkdir -p /opt/local/src/apache2-dev
     (
       cd /opt/local/src/apache2-dev
