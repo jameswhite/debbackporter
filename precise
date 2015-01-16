@@ -428,7 +428,7 @@ dbuild_jcommander(){
 
 
 dbuild_fastinfoset(){
-    # libstreambuffer-java
+    dbuild_xmlstreambuffer
     # libxsom-java
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/f/fastinfoset/fastinfoset_1.2.12-1.dsc"
     FILES="fastinfoset_1.2.12.orig.tar.xz fastinfoset_1.2.12-1.debian.tar.xz"
@@ -448,11 +448,29 @@ dbuild_fastinfoset(){
     ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
-    # libstreambuffer-java
-    # libxsom-java
+
+dbuild_xsom(){
+    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/x/xsom/xsom_0+20110809-1.dsc"
+    FILES="xsom_0+20110809.orig.tar.xz xsom_0+20110809-1.debian.tar.xz"
+    NAME='xsom'
+    VERSION='0+20110809'
+    SUFFIX=''
+
+    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+    (
+      cd /opt/local/src/${NAME}
+      wget -nc ${DSC_URL}
+      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+      dpkg-source -x ${DSC_FILE}
+    )
+    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+}
 
 dbuild_xmlstreambuffer(){
-    # libstax-ex-java
+    dbuild_stax-ex
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/x/xmlstreambuffer/xmlstreambuffer_1.5.1-1.dsc"
     FILES="xmlstreambuffer_1.5.1.orig.tar.gz xmlstreambuffer_1.5.1-1.debian.tar.xz"
     NAME='xmlstreambuffer'
