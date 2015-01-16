@@ -262,6 +262,8 @@ dbuild_jaxb(){
       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.debian.tar.xz
       dpkg-source -x jaxb_2.2.5-1.dsc
     )
+    # That time you spent 4 days compiling dependencies just so this fucker won't build
+    ( cd /opt/local/src/jaxb/jaxb-2.2.5; rm -fr mkdir tools/lib/redist )
     ( cd /opt/local/src/jaxb/jaxb-2.2.5; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/jaxb/jaxb-2.2.5; debian/rules binary && dpkg -i /opt/local/src/jaxb/*.deb)
 
