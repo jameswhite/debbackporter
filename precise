@@ -245,15 +245,15 @@ dpkg -i libscannotation-java_1.0.2+svn20110812-1_all.deb
 
 dbuild_jaxb(){
     add_packages libargs4j-java libisorelax-java libjing-java libmsv-java
-    dbuild_javatools
+#    dbuild_javatools
     # libtxw2-java # >= 0.1+20110809
-    dbuild_libcodemodel-java
+#    dbuild_libcodemodel-java
     # librelaxngcc-java
     # librngom-java
     # libdtd-parser-java
-    dbuild_fastinfoset
+#    dbuild_fastinfoset
     # libistack-commons-java
-    # libjaxb-api-java
+#    dbuild_jaxb-api
     [ ! -d /opt/local/src/jaxb ] && mkdir -p /opt/local/src/jaxb
     (
       cd /opt/local/src/jaxb
@@ -542,6 +542,26 @@ dbuild_jaxb-api(){
     FILES="jaxb-api_2.2.9.orig.tar.xz jaxb-api_2.2.9-1.debian.tar.xz"
     NAME='jaxb-api'
     VERSION='2.2.9'
+    SUFFIX=''
+
+    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+    (
+      cd /opt/local/src/${NAME}
+      wget -nc ${DSC_URL}
+      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+      dpkg-source -x ${DSC_FILE}
+    )
+    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+}
+
+dbuild_rngom(){
+    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/r/rngom/rngom_0+201103+svn20110406-1.dsc"
+    FILES="rngom_0+201103+svn20110406.orig.tar.xz rngom_0+201103+svn20110406-1.debian.tar.gz"
+    NAME='rngom'
+    VERSION='0+201103+svn20110406'
     SUFFIX=''
 
     URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
