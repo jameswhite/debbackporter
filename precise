@@ -18,6 +18,8 @@ dbuild_prepare(){
 # The build dependency nightmare begins...
 
 dbuild_dogtag(){
+echo "this is fucked"
+exit 1;
     dbuild_prepare
     add_packages apache2-dev debhelper default-jdk libcommons-cli-java libcommons-io-java \
                  libcommons-lang-java libidm-console-framework-java libservlet3.0-java \
@@ -183,20 +185,24 @@ dbuild_maven-repo-helper(){ # >= 1.8.5
 }
 
 dbuild_resteasy(){
+echo "this is fucked"
+exit 1
     add_packages glassfish-activation glassfish-javaee libjackson-json-java libjettison-java
-    # dbuild_jaxb
-    # dbuild_scannotation
-    [ ! -d /opt/local/src/resteasy ] && mkdir -p /opt/local/src/resteasy
-    (
-      cd /opt/local/src/resteasy
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/resteasy_3.0.6-2.dsc
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/resteasy_3.0.6.orig.tar.gz
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/resteasy_3.0.6-2.debian.tar.xz
-      dpkg-source -x resteasy_3.0.6-2.dsc
-    )
-    ( cd /opt/local/src/resteasy/resteasy-3.0.6; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/resteasy/resteasy-3.0.6; debian/rules binary && dpkg -i /opt/local/src/resteasy/*.deb)
-}
+    wget http://mirrors.kernel.org/ubuntu/pool/universe/r/resteasy/libresteasy-java_3.0.6-2_all.deb
+    dpkg -i libresteasy-java_3.0.6-2_all.deb
+# #    dbuild_jaxb
+# #    dbuild_scannotation
+#     [ ! -d /opt/local/src/resteasy ] && mkdir -p /opt/local/src/resteasy
+#     (
+#       cd /opt/local/src/resteasy
+#       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/resteasy_3.0.6-2.dsc
+#       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/resteasy_3.0.6.orig.tar.gz
+#       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/resteasy_3.0.6-2.debian.tar.xz
+#       dpkg-source -x resteasy_3.0.6-2.dsc
+#     )
+#     ( cd /opt/local/src/resteasy/resteasy-3.0.6; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+#       ( cd /opt/local/src/resteasy/resteasy-3.0.6; debian/rules binary && dpkg -i /opt/local/src/resteasy/*.deb)
+# }
 
 dbuild_apache-log4j(){
     add_packages libgnumail-java
