@@ -245,28 +245,30 @@ dpkg -i libscannotation-java_1.0.2+svn20110812-1_all.deb
 
 dbuild_jaxb(){
     add_packages libargs4j-java libisorelax-java libjing-java libmsv-java
-#    dbuild_javatools
-    # libtxw2-java # >= 0.1+20110809
-#    dbuild_libcodemodel-java
-    # librelaxngcc-java
-    # librngom-java
-    # libdtd-parser-java
-#    dbuild_fastinfoset
-    # libistack-commons-java
-#    dbuild_jaxb-api
-    [ ! -d /opt/local/src/jaxb ] && mkdir -p /opt/local/src/jaxb
-    (
-      cd /opt/local/src/jaxb
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.dsc
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5.orig.tar.xz
-      wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.debian.tar.xz
-      dpkg-source -x jaxb_2.2.5-1.dsc
-    )
-    # That time you spent 4 days compiling dependencies just so this fucker won't build
-    ( cd /opt/local/src/jaxb/jaxb-2.2.5; rm -fr mkdir tools/lib/redist )
-    ( cd /opt/local/src/jaxb/jaxb-2.2.5; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/jaxb/jaxb-2.2.5; debian/rules binary && dpkg -i /opt/local/src/jaxb/*.deb)
-
+    wget http://mirrors.kernel.org/ubuntu/pool/universe/j/jaxb/libjaxb-java_2.2.5-1_all.deb
+    dpkg -i libjaxb-java_2.2.5-1_all.deb
+# #    dbuild_javatools
+#     # libtxw2-java # >= 0.1+20110809
+# #    dbuild_libcodemodel-java
+#     # librelaxngcc-java
+#     # librngom-java
+#     # libdtd-parser-java
+# #    dbuild_fastinfoset
+#     # libistack-commons-java
+# #    dbuild_jaxb-api
+#     [ ! -d /opt/local/src/jaxb ] && mkdir -p /opt/local/src/jaxb
+#     (
+#       cd /opt/local/src/jaxb
+#       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.dsc
+#       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5.orig.tar.xz
+#       wget -nc http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.debian.tar.xz
+#       dpkg-source -x jaxb_2.2.5-1.dsc
+#     )
+#     # That time you spent 4 days compiling dependencies just so this fucker won't build
+#     ( cd /opt/local/src/jaxb/jaxb-2.2.5; rm -fr mkdir tools/lib/redist )
+#     ( cd /opt/local/src/jaxb/jaxb-2.2.5; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+#       ( cd /opt/local/src/jaxb/jaxb-2.2.5; debian/rules binary && dpkg -i /opt/local/src/jaxb/*.deb)
+#
 }
 
 dbuild_javatools(){
