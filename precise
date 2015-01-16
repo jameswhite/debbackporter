@@ -511,6 +511,7 @@ dbuild_xsom(){
     ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
+
     # librelaxngcc-java
 dbuild_relaxngcc(){
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/relaxngcc_1.12-1.dsc"
