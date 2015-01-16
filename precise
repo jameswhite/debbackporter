@@ -514,21 +514,23 @@ dbuild_xsom(){
 
     # librelaxngcc-java
 dbuild_relaxngcc(){
-    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/relaxngcc_1.12-1.dsc"
-    FILES="relaxngcc_1.12.orig.tar.xz relaxngcc_1.12-1.debian.tar.xz"
-    NAME='relaxngcc'
-    VERSION='1.12'
-    SUFFIX=''
-
-    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
-    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
-    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
-    (
-      cd /opt/local/src/${NAME}
-      wget -nc ${DSC_URL}
-      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
-      dpkg-source -x ${DSC_FILE}
-    )
-    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+    add_packages graphviz
+    wget http://mirrors.kernel.org/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java_1.12-1_all.deb
+#    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/relaxngcc_1.12-1.dsc"
+#    FILES="relaxngcc_1.12.orig.tar.xz relaxngcc_1.12-1.debian.tar.xz"
+#    NAME='relaxngcc'
+#    VERSION='1.12'
+#    SUFFIX=''
+#
+#    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+#    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+#    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+#    (
+#      cd /opt/local/src/${NAME}
+#      wget -nc ${DSC_URL}
+#      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+#      dpkg-source -x ${DSC_FILE}
+#    )
+#    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+#      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
