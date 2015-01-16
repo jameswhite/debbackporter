@@ -362,23 +362,26 @@ dpkg -i libistack-commons-java_2.17-1_all.deb
 }
 
 dbuild_args4j(){ # > 2.0.25
-    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/a/args4j/args4j_2.0.25-1.dsc"
-    FILES="args4j_2.0.25.orig.tar.gz args4j_2.0.25-1.debian.tar.gz"
-    NAME='args4j'
-    VERSION='2.0.25'
-    SUFFIX=''
-
-    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
-    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
-    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
-    (
-      cd /opt/local/src/${NAME}
-      wget -nc ${DSC_URL}
-      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
-      dpkg-source -x ${DSC_FILE}
-    )
-    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+    add_packages libmockito-java libobjenesis-java
+    wget http://mirrors.kernel.org/ubuntu/pool/universe/a/args4j/libargs4j-java_2.0.25-1_all.deb
+    dpkg -i libargs4j-java_2.0.25-1_all.de
+#    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/a/args4j/args4j_2.0.25-1.dsc"
+#    FILES="args4j_2.0.25.orig.tar.gz args4j_2.0.25-1.debian.tar.gz"
+#    NAME='args4j'
+#    VERSION='2.0.25'
+#    SUFFIX=''
+#
+#    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+#    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+#    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+#    (
+#      cd /opt/local/src/${NAME}
+#      wget -nc ${DSC_URL}
+#      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+#      dpkg-source -x ${DSC_FILE}
+#    )
+#    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+#      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
 
 dbuild_testng(){
