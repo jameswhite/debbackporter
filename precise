@@ -540,8 +540,8 @@ dbuild_relaxngcc(){
 dbuild_jaxb-api(){
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb-api/jaxb-api_2.2.9-1.dsc"
     FILES="jaxb-api_2.2.9.orig.tar.xz jaxb-api_2.2.9-1.debian.tar.xz"
-    NAME='jaxb-api"
-    VERSION='2.2.9"
+    NAME='jaxb-api'
+    VERSION='2.2.9'
     SUFFIX=''
 
     URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
