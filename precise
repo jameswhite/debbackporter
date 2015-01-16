@@ -245,12 +245,13 @@ dpkg -i libscannotation-java_1.0.2+svn20110812-1_all.deb
 
 dbuild_jaxb(){
     add_packages libargs4j-java libisorelax-java libjing-java libmsv-java
-    # javahelper # >= 0.43
+    dbuild_javatools
     # libtxw2-java # >= 0.1+20110809
-    # libcodemodel-java # >= 2.6
-    # librelaxngcc-java librngom-java
+    dbuild_libcodemodel-java
+    # librelaxngcc-java
+    # librngom-java
     # libdtd-parser-java
-    # libfastinfoset-java
+    dbuild_fastinfoset
     # libistack-commons-java
     # libjaxb-api-java
     [ ! -d /opt/local/src/jaxb ] && mkdir -p /opt/local/src/jaxb
@@ -429,7 +430,7 @@ dbuild_jcommander(){
 
 dbuild_fastinfoset(){
     dbuild_xmlstreambuffer
-    # libxsom-java
+    dbuild_xsom
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/f/fastinfoset/fastinfoset_1.2.12-1.dsc"
     FILES="fastinfoset_1.2.12.orig.tar.xz fastinfoset_1.2.12-1.debian.tar.xz"
     NAME='fastinfoset'
@@ -492,7 +493,7 @@ dbuild_stax-ex(){
 }
 dbuild_xsom(){
     add_packages libjavacc-maven-plugin-java libmaven-antrun-plugin-java librelaxng-datatype-java
-    # librelaxngcc-java
+    dbuild_relaxngcc
     DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/x/xsom/xsom_0+20110809-1.dsc"
     FILES="xsom_0+20110809.orig.tar.xz xsom_0+20110809-1.debian.tar.xz"
     NAME='xsom'
@@ -533,4 +534,25 @@ dbuild_relaxngcc(){
 #    )
 #    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
 #      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+}
+
+
+dbuild_jaxb-api(){
+    DSC_URL="http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb-api/jaxb-api_2.2.9-1.dsc"
+    FILES="jaxb-api_2.2.9.orig.tar.xz jaxb-api_2.2.9-1.debian.tar.xz"
+    NAME='jaxb-api"
+    VERSION='2.2.9"
+    SUFFIX=''
+
+    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+    (
+      cd /opt/local/src/${NAME}
+      wget -nc ${DSC_URL}
+      for file in ${FILES}; do  wget -nc "${URL_BASE}/$file"; done
+      dpkg-source -x ${DSC_FILE}
+    )
+    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
+      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
