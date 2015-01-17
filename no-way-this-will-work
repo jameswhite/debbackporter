@@ -1,0 +1,104 @@
+#!/bin/bash
+
+# vagrant init precise http://files.vagrantup.com/precise64.box && vagrant up && vagrant ssh
+# sudo su -
+
+apt-get update
+env DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold" upgrade
+env DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold" install dpkg-dev
+
+env DEBIAN_FRONTEND=noninteractive \
+apt-get install -y --force-yes     \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                   build-essential apache2-dev cmake debhelper libldap2-dev libnspr4-dev libnss3-dev libsvrcore-dev \
+                   pkg-config policycoreutils python-dev velocity libsepol1-dev | tee build-deps
+
+
+
+dpkg -l > pure_precise
+# Here's where shit gets weird.
+cp /etc/apt/sources.list /etc/apt/sources.list.dist
+cat<<EOF > /etc/apt/sources.list
+deb http://ftp.uk.debian.org/debian jessie main contrib non-free
+deb-src http://ftp.uk.debian.org/debian jessie main contrib non-free
+
+deb http://security.debian.org/ jessie/updates main contrib non-free
+deb-src http://security.debian.org/ jessie/updates main contrib non-free
+
+# jessie-updates, previously known as 'volatile'
+deb http://ftp.uk.debian.org/debian jessie-updates main contrib non-free
+deb-src http://ftp.uk.debian.org/debian jessie-updates main contrib non-free
+
+# jessie-backports, previously on backports.debian.org
+deb http://ftp.uk.debian.org/debian jessie-backports main contrib non-free
+deb-src http://ftp.uk.debian.org/debian jessie-backports main contrib non-free
+EOF
+
+gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
+gpg -a --export 8B48AD6246925553 | sudo apt-key add -
+
+apt-get clean
+apt-get update
+env DEBIAN_FRONTEND=noninteractive \
+apt-get install -y --force-yes     \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                   javahelper junit4 libcommons-cli-java libcommons-codec-java  \
+                   libcommons-io-java libcommons-lang-java                      \
+                   libidm-console-framework-java libjackson2-annotations-java   \
+                   libjss-java libldap-java libresteasy-java libservlet3.0-java \
+                   libtomcat7-java libtomcatjss-java libxalan2-java             \
+                   libxerces2-java dh-systemd
+
+
+
+
+
+
+################################################################################
+exit 0
+################################################################################
+
+# Build that stuff
+[ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
+[ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
+(
+  cd /opt/local/src/dogtag
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.dsc
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0.orig.tar.xz
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.debian.tar.xz
+  dpkg-source -x dogtag-pki_10.2.0-4.dsc
+)
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies:")
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/;  debian/rules binary)
+(mv /opt/local/src/dogtag/*.deb /opt/local/pkg/dogtag)
+
+
+
+
+# Install that stuff
+env DEBIAN_FRONTEND=noninteractive \
+apt-get install -y --force-yes     \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                   python-ldap python-lxml python-requests ldap-utils           \
+                   libjackson2-jaxrs-providers-java libjs-jquery                \
+                   libjs-underscore libxml-perl tomcat7-user libnss3-tools      \
+                   python-urllib3  libjackson2-core-java                        \
+                   libjackson2-databind-java libjackson2-dataformat-smile       \
+                   libjackson2-module-jaxb-annotations-java                     \
+                   python-ndg-httpsclient python-openssl python-pyasn1          \
+                   tomcat7-common libxslt1.1 python-cryptography python-cffi    \
+                   python-pycparser python-ply python-ply-yacc-3.2              \
+                   python-ply-lex-3.2 javascript-common | tee install-deps
+
+(
+  cd /opt/local/pkg/dogtag/
+  dpkg -i pki-base*
+  dpkg -i dogtag-pki-console-theme* dogtag-pki-server-theme*
+  dpkg -i pki-console* pki-server* pki-tools*
+  dpkg -i libsymkey-java* libsymkey-jni* pki-javadoc*
+  dpkg -i pki-tks* pki-tps* pki-ca* pki-kra* pki-ocsp*
+  dpkg -i dogtag-pki*
+)

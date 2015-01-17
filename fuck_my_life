@@ -1,0 +1,23 @@
+# Install that stuff
+# (
+#   cd /opt/local/pkg/dogtag/
+#   dpkg -i pki-base*
+#   dpkg -i dogtag-pki-console-theme* dogtag-pki-server-theme*
+#   dpkg -i pki-console* pki-server* pki-tools*
+#   dpkg -i libsymkey-java* libsymkey-jni* pki-javadoc*
+#   dpkg -i pki-tks* pki-tps* pki-ca* pki-kra* pki-ocsp*
+#   dpkg -i dogtag-pki*
+# )
+
+apt-get install python-ldap python-requests
+wget http://mirrors.kernel.org/ubuntu/pool/universe/d/dogtag-pki/pki-base_10.2.0-4_amd64.deb
+dpkg -i pki-base_10.2.0-4_amd64.deb
+wget http://mirrors.kernel.org/ubuntu/pool/universe/d/dogtag-pki/dogtag-pki-console-theme_10.2.0-4_all.deb
+dpkg -i dogtag-pki-console-theme_10.2.0-4_all.deb
+wget http://mirrors.kernel.org/ubuntu/pool/universe/d/dogtag-pki/dogtag-pki-server-theme_10.2.0-4_all.deb
+dpkg -i dogtag-pki-server-theme_10.2.0-4_all.deb
+wget http://mirrors.kernel.org/ubuntu/pool/universe/d/dogtag-pki/pki-console_10.2.0-4_all.deb
+dpkg -i pki-console_10.2.0-4_all.deb
+apt-get install -y ldap-utils libcrypt-ssleay-perl libjackson2-jaxrs-providers-java libjs-jquery libjs-underscore libxml-perl pki-tools tomcat7-user init-system-helpers
+wget http://mirrors.kernel.org/ubuntu/pool/universe/d/dogtag-pki/pki-server_10.2.0-4_amd64.deb
+dpkg -i pki-server_10.2.0-4_amd64.deb
