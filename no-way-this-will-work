@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# vagrant init precise http://files.vagrantup.com/precise64.box && vagrant up && vagrant ssh
-# sudo su -
+# vagrant destroy -f ; rm Vagrantfile; vagrant init precise http://files.vagrantup.com/precise64.box && vagrant up && vagrant ssh -- "sudo bash -c \"(wget -O - 'https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/no-way-this-will-work' | bash)\""
 
+set -e
 apt-get update
 env DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold" upgrade
 env DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold" install dpkg-dev
@@ -12,11 +12,13 @@ apt-get install -y --force-yes     \
                 -o Dpkg::Options::="--force-confdef" \
                 -o Dpkg::Options::="--force-confold" \
                    build-essential apache2-dev cmake debhelper libldap2-dev libnspr4-dev libnss3-dev libsvrcore-dev \
-                   pkg-config policycoreutils python-dev velocity libsepol1-dev | tee build-deps
-
+                   pkg-config policycoreutils python-dev velocity libsepol1-dev locales
 
 
 dpkg -l > pure_precise
+
+
+
 # Here's where shit gets weird.
 cp /etc/apt/sources.list /etc/apt/sources.list.dist
 cat<<EOF > /etc/apt/sources.list
@@ -50,9 +52,6 @@ apt-get install -y --force-yes     \
                    libjss-java libldap-java libresteasy-java libservlet3.0-java \
                    libtomcat7-java libtomcatjss-java libxalan2-java             \
                    libxerces2-java dh-systemd
-
-
-
 
 
 
