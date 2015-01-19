@@ -66,7 +66,7 @@ debhelper:           http://archive.ubuntu.com/ubuntu/pool/main/d/debhelper/debh
 apache2-dev:         http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-1ubuntu1.dsc
 init-system-helpers: http://archive.ubuntu.com/ubuntu/pool/main/i/init-system-helpers/init-system-helpers_1.14.dsc
 apr:                 http://archive.ubuntu.com/ubuntu/pool/main/a/apr/apr_1.5.1-3.dsc
-libldap2-dev:        http://archive.ubuntu.com/ubuntu/pool/main/o/openldap/openldap_2.4.21-0ubuntu5.6.dsc
+libldap2-dev:        http://archive.ubuntu.com/ubuntu/pool/main/o/openldap/openldap_2.4.31-1+nmu2ubuntu11.dsc
 
 libaprutil1-dev:     http://archive.ubuntu.com/ubuntu/pool/main/a/apr-util/apr-util_1.5.4-1.dsc
 tomcatjss:           http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0-0ubuntu1.dsc
