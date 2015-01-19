@@ -1,4 +1,5 @@
 #!/bin/bash
+export SELF=$0;
 # vagrant init precise http://files.vagrantup.com/precise64.box && vagrant up && vagrant ssh
 # sudo su -
 # alias doit='wget -qO precise "https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/precise" ; . precise'
@@ -22,7 +23,7 @@ files_for(){
 
 dbuild(){
     HANDLE=$1
-    DSC_URL="$(cat $0 | grep "^${HANDLE}: " | awk '{print $NF}')"
+    DSC_URL="$(cat $SELF | grep "^${HANDLE}: " | awk '{print $NF}')"
     if [ ! -z "${DSC_URL}" ]; then
         SUFFIX="$2" # some dsc files break the convention and add a suffix to the build dir that isn't included in the dsc file
         NAME=$(echo "${DSC_URL}" | sed -e 's/.*\///' -e 's/_.*//')
@@ -45,7 +46,7 @@ dbuild(){
             done
         fi
     else
-        echo "Cannot determine the .dsc URL for ${HANDLE}"
+        echo "Cannot determine the .dsc URL for ${HANDLE} in $SELF"
         exit 1;
     fi
 }
@@ -54,11 +55,11 @@ dbuild_prepare
 dbuild dogtag-pki
 
 exit 0;
+
 # The build dependency nightmare begins...
-dogtag-pki:           https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.dsc
+dogtag-pki:          https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.dsc
 dpkg:                http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg/dpkg_1.17.5ubuntu5.3.dsc
 debhelper:           http://archive.ubuntu.com/ubuntu/pool/main/d/debhelper/debhelper_9.20131227ubuntu1.dsc
-
 apache2-dev:         http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-1ubuntu1.dsc
 init-system-helpers: http://archive.ubuntu.com/ubuntu/pool/main/i/init-system-helpers/init-system-helpers_1.14.dsc
 apr:                 http://archive.ubuntu.com/ubuntu/pool/main/a/apr/apr_1.5.1-3.dsc
