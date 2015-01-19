@@ -23,20 +23,31 @@ files_for(){
 dbuild(){
     HANDLE=$1
     DSC_URL="$(cat $0 | grep "^${HANDLE}: " | awk '{print $NF}')"
-    SUFFIX="$2" # some dsc files break the convention and add a suffix to the build dir that isn't included in the dsc file
-    NAME=$(echo "${DSC_URL}" | sed -e 's/.*\///' -e 's/_.*//')
-    VERSION=$(echo "${DSC_URL}" | sed -e 's/.*\///' -e 's/.*_//' -e 's/-.*//' -e 's/.dsc$//')
-    URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
-    DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
-    [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
-    (
-      cd /opt/local/src/${NAME}
-      wget -nc ${DSC_URL}
-      for file in $(files_for ${DSC_FILE}); do wget -nc "${URL_BASE}/$file"; done
-      dpkg-source -x ${DSC_FILE}
-    )
-    ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
-      ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+    if [ ! -z "${DSC_URL}" ]; then
+        SUFFIX="$2" # some dsc files break the convention and add a suffix to the build dir that isn't included in the dsc file
+        NAME=$(echo "${DSC_URL}" | sed -e 's/.*\///' -e 's/_.*//')
+        VERSION=$(echo "${DSC_URL}" | sed -e 's/.*\///' -e 's/.*_//' -e 's/-.*//' -e 's/.dsc$//')
+        URL_BASE="$(echo ${DSC_URL} | sed -e 's/\/[^\/]*$//')"
+        DSC_FILE="$(echo ${DSC_URL} | sed -e 's/.*\///')"
+        [ ! -d /opt/local/src/${NAME} ] && mkdir -p /opt/local/src/${NAME}
+        (
+          cd /opt/local/src/${NAME}
+          wget -nc ${DSC_URL}
+          for file in $(files_for ${DSC_FILE}); do wget -nc "${URL_BASE}/$file"; done
+          dpkg-source -x ${DSC_FILE}
+        )
+        BUILD_DEPS=$( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies: " | sed -e 's/.*Unmet build dependencies: //' )
+        if [ -z "${BUILD_DEPS}" ];then
+            ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
+        else
+            for DEPENDENCY in ${BUILD_DEPS}; do
+                dbuild ${DEPENDENCY}
+            done
+        fi
+    else
+        echo "Cannot determine the .dsc URL for ${HANDLE}"
+        exit 1;
+    fi
 }
 
 dbuild_prepare
