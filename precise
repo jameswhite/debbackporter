@@ -9,11 +9,14 @@ add_packages(){
 }
 
 dbuild_prepare(){
-    apt-get update
-    env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
-    add_packages dpkg-dev debhelper javahelper po4a dh-autoreconf libbz2-dev liblzma-dev libselinux-dev cmake libnspr4-dev \
-                 libnss3-dev openjdk-7-jdk libsvrcore-dev junit junit4 libjss-java libldap-java libcommons-codec-java | tee build-deps-deps-precise
-    update-java-alternatives -s java-1.7.0-openjdk-amd64
+    if [ ! -f .prepared ]; then
+        apt-get update
+        env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
+        add_packages dpkg-dev debhelper javahelper po4a dh-autoreconf libbz2-dev liblzma-dev libselinux-dev cmake libnspr4-dev \
+                     libnss3-dev openjdk-7-jdk libsvrcore-dev junit junit4 libjss-java libldap-java libcommons-codec-java | tee build-deps-deps-precise
+        update-java-alternatives -s java-1.7.0-openjdk-amd64
+        touch .prepared
+    fi
 }
 
 files_for(){
@@ -63,6 +66,8 @@ debhelper:           http://archive.ubuntu.com/ubuntu/pool/main/d/debhelper/debh
 apache2-dev:         http://archive.ubuntu.com/ubuntu/pool/main/a/apache2/apache2_2.4.10-1ubuntu1.dsc
 init-system-helpers: http://archive.ubuntu.com/ubuntu/pool/main/i/init-system-helpers/init-system-helpers_1.14.dsc
 apr:                 http://archive.ubuntu.com/ubuntu/pool/main/a/apr/apr_1.5.1-3.dsc
+libldap2-dev:        http://archive.ubuntu.com/ubuntu/pool/main/o/openldap/openldap_2.4.21-0ubuntu5.6.dsc
+
 libaprutil1-dev:     http://archive.ubuntu.com/ubuntu/pool/main/a/apr-util/apr-util_1.5.4-1.dsc
 tomcatjss:           http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0-0ubuntu1.dsc
 jackson-annotations: http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-annotations/jackson-annotations_2.2.2-1.dsc
