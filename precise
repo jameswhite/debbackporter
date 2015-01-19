@@ -22,7 +22,7 @@ files_for(){
 
 dbuild(){
     HANDLE=$1
-    DSC_URL="$(cat $0 | grep "^${HANDLE}" | awk '{print $NF}')"
+    DSC_URL="$(cat $0 | grep "^${HANDLE}: " | awk '{print $NF}')"
     SUFFIX="$2" # some dsc files break the convention and add a suffix to the build dir that isn't included in the dsc file
     NAME=$(echo "${DSC_URL}" | sed -e 's/.*\///' -e 's/_.*//')
     VERSION=$(echo "${DSC_URL}" | sed -e 's/.*\///' -e 's/.*_//' -e 's/-.*//' -e 's/.dsc$//')
@@ -38,6 +38,8 @@ dbuild(){
     ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep . ) || \
       ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
+
+dbuild dogtag-pki
 
 exit 0;
 # The build dependency nightmare begins...
