@@ -39,6 +39,7 @@ dbuild(){
       ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
 }
 
+dbuild_prepare
 dbuild dogtag-pki
 
 exit 0;
