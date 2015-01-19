@@ -40,7 +40,7 @@ dbuild(){
           for file in $(files_for ${DSC_FILE}); do wget -nc "${URL_BASE}/$file"; done
           dpkg-source -x ${DSC_FILE}
         )
-        BUILD_DEPS=$( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies: " | sed -e 's/.*Unmet build dependencies: //' )
+        BUILD_DEPS=$( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies: " | sed -e 's/.*Unmet build dependencies: //' | sed -e 's/([^)]*)//g' )
         if [ -z "${BUILD_DEPS}" ];then
             ( cd /opt/local/src/${NAME}/${NAME}-${VERSION}${SUFFIX}; debian/rules binary && dpkg -i /opt/local/src/${NAME}/*.deb)
         else
@@ -55,6 +55,8 @@ dbuild(){
 }
 
 dbuild_prepare
+dbuild dpkg
+dbuild debhelper
 dbuild dogtag-pki
 
 exit 0;
