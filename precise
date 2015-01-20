@@ -73,6 +73,7 @@ libdb5.3-dev:        http://archive.ubuntu.com/ubuntu/pool/main/d/db5.3/db5.3_5.
 pkg-config:          http://archive.ubuntu.com/ubuntu/pool/main/p/pkg-config/pkg-config_0.28-1ubuntu1.dsc
 libglib2.0-dev:      http://archive.ubuntu.com/ubuntu/pool/main/g/glib2.0/glib2.0_2.43.2-1ubuntu1.dsc
 cdbs:                http://archive.ubuntu.com/ubuntu/pool/main/c/cdbs/cdbs_0.4.127ubuntu1.dsc
+dh-buildinfo:        http://archive.ubuntu.com/ubuntu/pool/main/d/dh-buildinfo/dh-buildinfo_0.11.dsc
 
 libaprutil1-dev:     http://archive.ubuntu.com/ubuntu/pool/main/a/apr-util/apr-util_1.5.4-1.dsc
 tomcatjss:           http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0-0ubuntu1.dsc
