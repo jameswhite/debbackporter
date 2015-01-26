@@ -8,10 +8,4 @@ BASEDIR=$(cd $(dirname $0); pwd);
 BIN=${BASEDIR}/bin
 export SELF BASEDIR BIN
 
-# Ensure we've got the latest
-(
-  cd ${BASEDIR};
-  git pull origin master
-)
-
 echo "yaay! precise!"
