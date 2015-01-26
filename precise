@@ -12,7 +12,6 @@ export SELF BASEDIR BIN
 (
   cd ${BASEDIR};
   git pull origin master
-  $(lsb_release -sc)
 )
 
 echo "yaay! precise!"

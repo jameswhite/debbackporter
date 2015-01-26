@@ -1,5 +1,9 @@
 #!/bin/bash
-vagrant init precise http://files.vagrantup.com/precise64.box && vagrant up && \
+(
+cd ~/boxes/precise-jessie
+if [ "$1" == "-f" ]; then
+    vagrant halt && vagrant destroy --force && rm Vagrantfile; vagrant init precise ~/Downloads/precise64.box && vagrant up
+fi
 cat<<EOF | vagrant ssh -- -A -T "sudo /bin/bash"
 if [ -z "\$(which git)" ] ;then
     apt-get update
@@ -11,3 +15,4 @@ if [ ! -d /var/cache/git/debbackporter ] ; then
 fi
 /var/cache/git/debbackporter/\$(lsb_release -sc)
 EOF
+)
