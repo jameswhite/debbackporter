@@ -8,5 +8,5 @@ BASEDIR=$(cd $(dirname $0); pwd);
 BIN=${BASEDIR}/bin
 export SELF BASEDIR
 export PATH="$BIN:$PATH"
-echo $PATH
-echo "yaay! precise!"
+dbuild_prepare
+dbuild dogtag-pki
