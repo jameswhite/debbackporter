@@ -1,0 +1,5 @@
+#!/bin/bash
+files_for(){
+    DSC_FILE="$1"
+    echo "$(cat ${DSC_FILE} | sed -n '/^Files: *$/,$p' | sed -e '/^ *$/ q' | grep -v ".*:" | grep . | awk '{print $NF}' | tr '\n' ' ')"
+}
