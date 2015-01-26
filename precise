@@ -6,6 +6,7 @@
 SELF=$0
 BASEDIR=$(cd $(dirname $0); pwd);
 BIN=${BASEDIR}/bin
-export SELF BASEDIR BIN
-
+export SELF BASEDIR
+export PATH="$BIN:$PATH"
+echo $PATH
 echo "yaay! precise!"
