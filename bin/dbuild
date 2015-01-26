@@ -1,6 +1,6 @@
 #!/bin/bash
 HANDLE=$1
-SOURCES=(dirname $0)/../lib/sources)
+SOURCES="$(dirname $0)/../lib/sources"
 
 DSC_URL="$(cat $SOURCES | grep "^${HANDLE}: " | awk '{print $NF}')"
 if [ ! -z "${DSC_URL}" ]; then
