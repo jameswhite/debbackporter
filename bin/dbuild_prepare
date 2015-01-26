@@ -5,8 +5,6 @@ if [ ! -f .prepared ]; then
     env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
     ${BIN}/add_packages dpkg-dev debhelper javahelper po4a dh-autoreconf libbz2-dev liblzma-dev libselinux-dev cmake libnspr4-dev \
                         libnss3-dev openjdk-7-jdk libsvrcore-dev junit junit4 libjss-java libldap-java libcommons-codec-java
-echo "EXIT $?"
-echo "wtf"
     update-java-alternatives -s java-1.7.0-openjdk-amd64
     touch .prepared
 fi
