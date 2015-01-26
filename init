@@ -1,0 +1,13 @@
+#!/bin/bash
+vagrant init precise http://files.vagrantup.com/precise64.box && vagrant up && \
+cat<<EOF | vagrant ssh -- -T "sudo /bin/bash"
+if [ -z "$(which git)" ] ;then
+    apt-get update
+    apt-get install -y git
+fi
+[ ! -d /var/cache/git ] && mkdir -p /var/cache/git
+if [ ! -d /var/cache/git/debbackporter ] ; then
+    (cd /var/cache/git; git clone https://github.com/jameswhite/debbackporter)
+fi
+/var/cache/git/backporter/$(lsb_release -sc)
+EOF
