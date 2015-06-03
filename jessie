@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# vagrant init jessie https://downloads.sourceforge.net/project/vagrantboxjessie/debian80.box
+# vagrant box add jessie https://downloads.sourceforge.net/project/vagrantboxjessie/debian80.box
+# vagrant init jessie
 # vagrant up
-# vagrant ssh
+# vagrant ssh -- -A
 # sudo su -
-# curl -s https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/jessie | bash
+# wget --no-check-certificate -qO - https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/jessie | bash > jessie.out 2>&1
 
 apt-get update
 env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
