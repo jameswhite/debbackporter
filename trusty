@@ -8,37 +8,85 @@
 
 apt-get update
 env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
-[ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
-[ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
-apt-get install -y dpkg-dev
-(
-  cd /opt/local/src/dogtag
-  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.dsc
-  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0.orig.tar.xz
-  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.debian.tar.xz
-  dpkg-source -x dogtag-pki_10.2.0-4.dsc
-)
-
-(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies:")
-
-env DEBIAN_FRONTEND=noninteractive \
-apt-get install -y --force-yes     \
+env DEBIAN_FRONTEND=noninteractive
+apt-get install -y --force-yes \
                 -o Dpkg::Options::="--force-confdef" \
                 -o Dpkg::Options::="--force-confold" \
-                build-essential apache2-dev cmake debhelper default-jdk        \
-                dh-systemd javahelper junit4 libcommons-cli-java               \
-                libcommons-codec-java libcommons-io-java libcommons-lang-java  \
-                libidm-console-framework-java libjackson2-annotations-java     \
-                libjss-java libldap-java libldap2-dev libnspr4-dev libnss3-dev \
-                libservlet3.0-java libsvrcore-dev libtomcat7-java              \
-                libtomcatjss-java libxalan2-java libxerces2-java pkg-config    \
-                policycoreutils python-dev velocity zlib1g-dev
-################################################################################
+                apache2-dev \
+                build-essential \
+                cmake \
+                debhelper \
+                default-jdk \
+                dh-systemd \
+                glassfish-activation \
+                javahelper \
+                javascript-common \
+                junit4 \
+                ldap-utils \
+                libargs4j-java \
+                libcodemodel-java \
+                libcommons-cli-java \
+                libcommons-codec-java \
+                libcommons-io-java \
+                libcommons-lang-java \
+                libcrypt-ssleay-perl \
+                libdtd-parser-java \
+                libhttpclient-java \
+                libidm-console-framework-java \
+                libisorelax-java \
+                libistack-commons-java \
+                libjackson-json-java \
+                libjackson2-annotations-java \
+                libjackson2-core-java \
+                libjackson2-databind-java \
+                libjackson2-dataformat-smile \
+                libjaxb-api-java \
+                libjettison-java \
+                libjing-java \
+                libjs-jquery \
+                libjs-underscore \
+                libjss-java \
+                libldap-java \
+                libldap2-dev \
+                libmsv-java \
+                libnspr4-dev \
+                libnss3-dev \
+                libnss3-tools \
+                libscannotation-java \
+                libservlet3.0-java \
+                libstax-java \
+                libstreambuffer-java \
+                libsvrcore-dev \
+                libtomcat7-java \
+                libtomcatjss-java \
+                libxalan2-java \
+                libxerces2-java \
+                libxml-perl \
+                libxslt1.1 \
+                libyaml-snake-java \
+                openjdk-7-doc \
+                pkg-config \
+                policycoreutils \
+                python-cffi \
+                python-dev \
+                python-ldap \
+                python-lxml \
+                python-openssl \
+                python-ply \
+                python-ply-lex-3.2 \
+                python-ply-yacc-3.2 \
+                python-pyasn1 \
+                python-pycparser \
+                python-requests \
+                python-urllib3 \
+                tomcat7-common \
+                tomcat7-user \
+                velocity \
+                zlib1g-dev
+
 apt-get remove -y selinux-policy-default
 
-apt-get install -y glassfish-activation libhttpclient-java libjackson-json-java libjettison-java libscannotation-java libyaml-snake-java \
-                   libargs4j-java libcodemodel-java libdtd-parser-java libisorelax-java libistack-commons-java libjaxb-api-java libjing-java libmsv-java \
-                   libstax-java libstreambuffer-java openjdk-7-doc
+################################################################################
 
 wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rngom/librngom-java_0+201103+svn20110406-1_all.deb
 dpkg -i librngom-java_0+201103+svn20110406-1_all.deb
@@ -65,30 +113,30 @@ dpkg -i libjaxb-java_2.2.5-1_all.deb
 wget http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/libresteasy-java_3.0.6-2_all.deb
 dpkg -i libresteasy-java_3.0.6-2_all.deb
 
-# Build that stuff
-(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/;  debian/rules binary)
-(mv /opt/local/src/dogtag/*.deb /opt/local/pkg/dogtag)
-
-env DEBIAN_FRONTEND=noninteractive \
-apt-get install -y --force-yes     \
-                -o Dpkg::Options::="--force-confdef" \
-                -o Dpkg::Options::="--force-confold" \
-                   python-ldap python-lxml python-requests ldap-utils           \
-                   libjs-jquery                \
-                   libjs-underscore libxml-perl tomcat7-user libnss3-tools      \
-                   python-urllib3  libjackson2-core-java                        \
-                   libjackson2-databind-java libjackson2-dataformat-smile       \
-                   python-openssl python-pyasn1          \
-                   tomcat7-common libxslt1.1 python-cffi    \
-                   python-pycparser python-ply python-ply-yacc-3.2              \
-                   libcrypt-ssleay-perl \
-                   python-ply-lex-3.2 javascript-common | tee install-deps
-
 wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-module-jaxb-annotations/libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
 dpkg -i libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
 
 wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-jaxrs-providers/libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
 dpkg -i libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
+
+################################################################################
+
+# Get that stuff
+[ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
+[ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
+apt-get install -y dpkg-dev
+(
+  cd /opt/local/src/dogtag
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.dsc
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0.orig.tar.xz
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.debian.tar.xz
+  dpkg-source -x dogtag-pki_10.2.0-4.dsc
+)
+
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies:")
+# Build that stuff
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/;  debian/rules binary)
+(mv /opt/local/src/dogtag/*.deb /opt/local/pkg/dogtag)
 
 # Install that stuff
 (
