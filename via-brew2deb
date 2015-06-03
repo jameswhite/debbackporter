@@ -1,0 +1,293 @@
+#!/bin/bash
+# vagrant halt; vagrant destroy -f
+# git clone git@github.com:github/brew2deb.git
+# (cd brew2deb; vagrant up)
+
+export vg='vagrant ssh -- -A'
+export vginstall='vagrant ssh -- -A sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" $*'
+export vgpunt='vagrant ssh -- -A "find /srv/apt/ubuntu/ -type f -a ! -name "*.deb" -exec sudo rm {} \;; sudo /root/repo-init ; sudo /root/repo-update ; sudo apt-get update > /dev/null2>&1"'
+
+b2d(){
+  DSC_URL=$1
+  PKG=$(echo "${DSC_URL}" | sed -e 's/.*\///' -e 's/\.dsc$//')
+  NAME="$(echo $PKG|sed -e 's/_.*//')"
+  VERSION="$(echo $PKG|sed -e 's/[^_]*_//')"
+  # mk-build-deps -i "${PKG}.dsc" -t "apt-get --no-install-recommends -y"
+  echo ${DSC_URL}
+  [ ! -d packages/${NAME} ] && mkdir packages/${NAME}
+  if [ ! -f packages/${NAME}/formula.rb ]; then
+  cat <<EOF > packages/${NAME}/formula.rb
+class Dpkg < DebianSourceFormula
+  url "${DSC_URL}"
+  md5 "$(wget -qO - ${DSC_URL} | md5)"
+  version "${VERSION}+github1"
+end
+EOF
+  fi
+  BREW2DEB_PACKAGES=$(echo $PKG|sed -e 's/_.*//') vagrant provision
+}
+
+################################################################################
+
+(cd bin; tar cf - repo-init repo-update | (vagrant ssh -- -A "sudo tar xf - -C /root";))
+$vg sudo apt-get update
+$vg sudo env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
+$vginstall cmake                \
+          dh-autoreconf         \
+          dpkg-dev              \
+          dpkg-sig              \
+          equivs                \
+          flex                  \
+          javahelper            \
+          junit                 \
+          junit4                \
+          libbz2-dev            \
+          libcommons-codec-java \
+          libjss-java           \
+          libldap-java          \
+          liblzma-dev           \
+          libncursesw5-dev      \
+          libnspr4-dev          \
+          libnss3-dev           \
+          libselinux-dev        \
+          libsvrcore-dev        \
+          openjdk-7-jdk         \
+          pkg-config            \
+          po4a                  \
+          | tee build-deps-deps-precise
+
+$vg sudo update-java-alternatives -s java-1.7.0-openjdk-amd64
+vagrant ssh -- -A sudo /root/repo-init
+
+################################################################################
+
+b2d http://archive.ubuntu.com/ubuntu/pool/main/d/dpkg_1.17.5ubuntu5.dsc
+b2d http://archive.ubuntu.com/ubuntu/pool/main/d/debhelper_9.20131227ubuntu1.dsc
+# b2d http://archive.ubuntu.com/ubuntu/pool/main/i/init-system-helpers_1.14.dsc
+rm packages/init-system-helpers/formula.rb
+b2d http://archive.ubuntu.com/ubuntu/pool/main/i/init-system-helpers/init-system-helpers_1.20ubuntu3.dsc
+
+$vg sudo apt-get update
+$vginstall debhelper init-system-helpers dpkg
+# OK
+
+$vginstall doxygen libsctp-dev uuid-dev
+b2d http://archive.ubuntu.com/ubuntu/pool/main/a/apr_1.5.1-3.dsc
+# OK
+
+$vginstall libdb-dev unixodbc-dev
+b2d http://archive.ubuntu.com/ubuntu/pool/main/a/apr-util_1.5.4-1.dsc
+# OK
+
+$vginstall debhelper libapr1 libaprutil1-dev libapr1-dev libpcre3-dev liblua5.1-0-dev libxml2-dev
+b2d http://archive.ubuntu.com/ubuntu/pool/main/a/apache2_2.4.10-1ubuntu1.dsc
+# OK
+
+$vginstall ant default-jdk libcommons-logging-java libtomcat7-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/t/tomcatjss/tomcatjss_7.1.0-1.dsc
+# OK
+
+$vginstall python-docutils libxmlunit-java
+b2d http://archive.ubuntu.com/ubuntu/pool/main/m/maven-repo-helper/maven-repo-helper_1.8.5.dsc
+# OK
+
+$vginstall cdbs maven-ant-helper help2man maven-repo-helper libmaven-plugin-tools-java libtomcatjss-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/m/maven-debian-helper/maven-debian-helper_1.6.6.dsc
+# OK
+
+$vginstall maven-debian-helper default-jdk-doc libmaven-javadoc-plugin-java libtomcatjss-java maven-debian-helper
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-annotations/jackson-annotations_2.2.2-1.dsc
+# OK
+
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/d/dtd-parser/dtd-parser_1.2~svn20110404-1.dsc
+# OK
+
+$vginstall libmaven-bundle-plugin-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jcommander/jcommander_1.32-1.dsc
+# OK
+
+$vginstall libmaven-bundle-plugin-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/s/snakeyaml/snakeyaml_1.12-2.dsc
+# OK
+
+$vginstall libjcommander-java libguice-java libyaml-snake-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/t/testng/testng_6.8.7-2.dsc
+# OK
+
+$vginstall glassfish-activation
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/s/stax-ex/stax-ex_1.7.1-1.dsc
+# OK (when all the above is correct)
+# $vg sudo mkdir -p /srv/apt/ubuntu/pool/main/s/stax-ex/
+# $vg sudo wget -O /srv/apt/ubuntu/pool/main/s/stax-ex/libstax-ex-java_1.7.1-1_all.deb http://archive.ubuntu.com/ubuntu/pool/universe/s/stax-ex/libstax-ex-java_1.7.1-1_all.deb
+# $vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1
+
+$vginstall libstax-ex-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/x/xmlstreambuffer/xmlstreambuffer_1.5.1-1.dsc
+# OK
+
+# librelaxngcc-java (why do we not build this?)
+$vginstall graphviz libmsv-java
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/r/relaxngcc
+$vg sudo wget -O /srv/apt/ubuntu/pool/main/r/relaxngcc/librelaxngcc-java_1.12-1_all.deb http://mirrors.kernel.org/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java_1.12-1_all.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+# OK?
+
+$vginstall libjavacc-maven-plugin-java libmaven-antrun-plugin-java librelaxng-datatype-java libbuild-helper-maven-plugin-java librelaxngcc-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/x/xsom/xsom_0+20110809-1.dsc
+# OK
+
+$vginstall libxsom-java libstreambuffer-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/f/fastinfoset/fastinfoset_1.2.12-1.dsc
+# OK
+
+$vginstall libmaven-bundle-plugin-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb-api/jaxb-api_2.2.9-1.dsc
+# OK
+
+$vginstall libgnumail-java
+b2d http://archive.ubuntu.com/ubuntu/pool/main/a/apache-log4j1.2/apache-log4j1.2_1.2.17-4ubuntu3.dsc
+# OK
+
+$vginstall libmockito-java libobjenesis-java
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/a/args4j
+$vg sudo wget  -O /srv/apt/ubuntu/pool/main/a/args4j/libargs4j-java_2.0.25-1_all.deb http://mirrors.kernel.org/ubuntu/pool/universe/a/args4j/libargs4j-java_2.0.25-1_all.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+# OK?
+
+$vginstall ant-doc
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/libc/libcodemodel-java/libcodemodel-java_2.6-1.dsc
+# OK
+
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/i/istack-commons
+$vg sudo wget -O /srv/apt/ubuntu/pool/main/i/istack-commons/libistack-commons-java_2.17-1_all.deb http://mirrors.kernel.org/ubuntu/pool/universe/i/istack-commons/libistack-commons-java_2.17-1_all.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+# OK?
+
+$vginstall libtest-minimumversion-perl libtest-perl-critic-perl libtest-strict-perl gcj-jdk fastjar gcj-jre gcj-4.6-jdk gcj-4.6-jre libgcj12-dev ecj-gcj  libecj-java-gcj gcj-jre-headless gcj-4.6-jre ecj java-gcj-compat gcj-4.6-jre-headless libgcj12-awt gcj-4.6-jre-headless binfmt-support
+b2d http://archive.ubuntu.com/ubuntu/pool/main/j/javatools/javatools_0.45ubuntu1.dsc
+# OK
+
+$vginstall libjavassist-java
+# b2d http://archive.ubuntu.com/ubuntu/pool/universe/s/scannotation/scannotation_1.0.2+svn20110812-1.dsc # Doesn't build.
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/s/scannotation
+$vg sudo wget -O /srv/apt/ubuntu/pool/main/s/scannotation/libscannotation-java_1.0.2+svn20110812-1_all.deb http://mirrors.kernel.org/ubuntu/pool/universe/s/scannotation/libscannotation-java_1.0.2+svn20110812-1_all.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+# OK?
+
+$vginstall libjavacc-maven-plugin-java libmaven-antrun-plugin-java libmsv-java librelaxng-datatype-java libisorelax-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/r/rngom/rngom_0+201103+svn20110406-1.dsc
+# OK
+
+$vginstall libcodemodel-java libargs4j-java libxsom-java librelaxng-datatype-java librelaxng-datatype-java librngom-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/t/txw2/txw2_0.1+20110809-1.dsc
+# OK
+
+$vginstall libargs4j-java libisorelax-java libjing-java libmsv-java libdtd-parser-java libfastinfoset-java libjaxb-api-java libtxw2-java librngom-java
+# b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/jaxb_2.2.5-1.dsc
+# FAILS
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/j/jaxb
+$vg sudo wget -O /srv/apt/ubuntu/pool/main/j/jaxb/libjaxb-java_2.2.5-1_all.deb http://mirrors.kernel.org/ubuntu/pool/universe/j/jaxb/libjaxb-java_2.2.5-1_all.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+# OK?
+
+$vginstall glassfish-activation glassfish-javaee libjackson-json-java libjettison-java liblog4j1.2-java libjaxb-java libscannotation-java
+# b2d http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/resteasy_3.0.6-2.dsc 
+# FAILS Missing: javax.servlet:servlet-api:jar:debian (although libservlet3.0-javais already the newest version)
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/r/resteasy
+$vg sudo wget  -O /srv/apt/ubuntu/pool/main/r/resteasy/libresteasy-java_3.0.6-2_all.deb http://mirrors.kernel.org/ubuntu/pool/universe/r/resteasy/libresteasy-java_3.0.6-2_all.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+# OK
+
+################################################################################
+$vginstall xmlstarlet libresteasy-java libjackson-json-java
+
+# libjackson2-core-java (>= 2.4.2)
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-core/jackson-core_2.4.2-2.dsc
+
+# libjackson2-annotations-java (>= 2.4.0)
+rm packages/jackson-annotations/formula.rb
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-annotations/jackson-annotations_2.4.2-2.dsc
+
+#groovy
+b2d http://archive.ubuntu.com/ubuntu/pool/main/j/jarjar/jarjar_1.4+svn142-4ubuntu1.dsc
+$vginstall libjarjar-java libow-util-ant-tasks-java tofrodos
+b2d http://http.debian.net/debian/pool/main/g/groovy/groovy_1.8.6-4.dsc
+
+$vginstall groovy=1.8.6-4+github1
+
+# libasm4-java
+b2d https://launchpad.net/ubuntu/+archive/primary/+files/libasm4-java_4.1-3.dsc
+
+$vginstall libasm4-java
+# libcglib3-java
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/c/cglib3/cglib3_3.1+dfsg-1.dsc
+
+$vginstall libjackson2-core-java  libjackson2-core-java-doc libjackson2-annotations-java-doc libjackson2-annotations-java libcglib3-java
+
+# libjackson2-databind-java (>= 2.4.2)
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-databind/jackson-databind_2.4.2-2.dsc
+
+$vginstall libjackson2-databind-java libmaven-enforcer-plugin-java
+
+# libjackson2-module-jaxb-annotations-java (>= 2.4)
+# b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-module-jaxb-annotations/jackson-module-jaxb-annotations_2.4.2-1.dsc
+# FAILS
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/j/jackson-module-jaxb-annotations
+$vg sudo wget -O /srv/apt/ubuntu/pool/main/j/jackson-module-jaxb-annotations/libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-module-jaxb-annotations/libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+$vginstall libjackson2-module-jaxb-annotations-java
+
+# libjackson2-dataformat-smile (>= 2.4.2)
+b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-dataformat-smile/jackson-dataformat-smile_2.4.2-1.dsc
+$vginstall libjackson2-dataformat-smile
+
+$vginstall resteasy-java libjackson-json-java init-system-helpers=1.20ubuntu3+github1
+
+
+# libjackson2-jaxrs-providers-java
+$vginstall libjackson2-core-java libjackson2-databind-java libjackson2-dataformat-smile libjackson2-module-jaxb-annotations-java
+# b2d http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-jaxrs-providers/jackson-jaxrs-providers_2.4.2-1.dsc
+# FAILS
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/j/jackson-jaxrs-providers
+$vg sudo wget -O /srv/apt/ubuntu/pool/main/j/jackson-jaxrs-providers/libjackson2-jaxrs-providers-java_2.4.2-1_all.deb http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-jaxrs-providers/libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+$vginstall libjackson2-jaxrs-providers-java
+
+$vginstall libnss3-tools
+
+# --
+# b2d http://archive.ubuntu.com/ubuntu/pool/main/n/nspr/nspr_4.10.7-0ubuntu0.14.04.1.dsc
+# Requires a manual build, brew2deb choking on the epoch
+$vg sudo mkdir -p /srv/apt/ubuntu/pool/main/n/nspr
+$vg sudo wget -O /srv/apt/ubuntu/pool/main/n/nspr/libnspr4_4.10.7-1ubuntu1_amd64.deb http://archive.ubuntu.com/ubuntu/pool/main/n/nspr/libnspr4_4.10.7-1ubuntu1_amd64.deb
+$vg sudo wget -O /srv/apt/ubuntu/pool/main/n/nspr/libnspr4-dev_4.10.7-1ubuntu1_amd64.deb http://archive.ubuntu.com/ubuntu/pool/main/n/nspr/libnspr4-dev_4.10.7-1ubuntu1_amd64.deb
+$vg "sudo /root/repo-update && sudo apt-get update > /dev/null 2>&1"
+$vginstall libnspr4 libnspr4-dev
+
+$vginstall libjackson2-jaxrs-providers-java
+
+################################################################################
+(
+  cd /opt/local/pkg/dogtag/
+  apt-get install -y python-ldap python-requests
+  dpkg -i pki-base_10.2.0-4_amd64.deb || apt-get -y remove pki-base
+  dpkg -i dogtag-pki-console-theme* dogtag-pki-server-theme*
+  apt-get install ldap-utils libcrypt-ssleay-perl libjs-jquery libjs-underscore libxml-perl tomcat7-user
+
+  # libjackson2-jaxrs-providers-java init-system-helpers >= 1.18
+  dpkg -i pki-tools_10.2.0-4_amd64.deb || apt-get remove -y pki-tools
+  dpkg -i pki-console_10.2.0-4_all.deb || apt-get remove -y pki-console
+
+  dpkg -i pki-server_10.2.0-4_amd64.deb || apt-get remove -y pki-server # requires libjackson2-jaxrs-providers-java, which removes => [ libjackson-json-java libresteasy-java pki-base pki-console pki-tools ]
+
+  dpkg -i libsymkey-java* libsymkey-jni* pki-javadoc*
+  dpkg -i pki-tks* pki-tps* pki-ca* pki-kra* pki-ocsp*
+  dpkg -i dogtag-pki*
+)
+
+################################################################################
+
+
+$vginstall apache2-dev debhelper default-jdk libcommons-cli-java libcommons-io-java libcommons-lang-java libidm-console-framework-java libservlet3.0-java libtomcat7-java libxalan2-java libxerces2-java policycoreutils python-dev selinux-policy-dev velocity dh-systemd libjackson2-annotations-java libresteasy-java
+b2d https://launchpad.net/ubuntu/+archive/primary/+files/dogtag-pki_10.2.0-2.dsc
+# FAILS com/netscape/certsrv/client/PKIConnection.java:507: error: method does not override or implement a method from a supertype =>  @Override

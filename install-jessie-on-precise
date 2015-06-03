@@ -1,0 +1,16 @@
+
+
+(
+  cd /opt/local/pkg/dogtag/
+  apt-get install -y python-ldap python-requests
+  dpkg -i pki-base*
+  dpkg -i dogtag-pki-console-theme* dogtag-pki-server-theme*
+  apt-get install ldap-utils libcrypt-ssleay-perl libjs-jquery libjs-underscore libxml-perl tomcat7-user
+
+  # libjackson2-jaxrs-providers-java init-system-helpers >= 1.18
+  dpkg -i pki-console* pki-server* pki-tools*
+
+  dpkg -i libsymkey-java* libsymkey-jni* pki-javadoc*
+  dpkg -i pki-tks* pki-tps* pki-ca* pki-kra* pki-ocsp*
+  dpkg -i dogtag-pki*
+)
