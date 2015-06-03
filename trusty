@@ -97,7 +97,6 @@ dpkg -i libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
   dpkg -i dogtag-pki-console-theme* dogtag-pki-server-theme*
   dpkg -i pki-console_* || apt-get -y remove pki-console
   dpkg -i pki-tools* || apt-get -y remove pki-tools
-# --
   dpkg -i pki-server* || apt-get -y remove pki-server
   dpkg -i libsymkey-java* libsymkey-jni* pki-javadoc*
   dpkg -i pki-tks* pki-tps* pki-ca* pki-kra* pki-ocsp*
