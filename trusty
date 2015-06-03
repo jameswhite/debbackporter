@@ -4,13 +4,13 @@
 # vagrant up
 # vagrant ssh -- -A
 # sudo su -
-# wget --no-check-certificate -qO - https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/jessie | bash > jessie.out 2>&1
+# wget --no-check-certificate -qO - https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/trusty | bash > jessie.out 2>&1
 
 apt-get update
 env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
 [ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
 [ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
-apt-get install dpkg-dev
+apt-get install -y dpkg-dev
 (
   cd /opt/local/src/dogtag
   wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.dsc
@@ -34,35 +34,36 @@ apt-get install -y --force-yes     \
                 libtomcatjss-java libxalan2-java libxerces2-java pkg-config    \
                 policycoreutils python-dev velocity zlib1g-dev
 ################################################################################
-libresteasy-java
-  wget http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/libresteasy-java_3.0.6-2_all.deb
-  dpkg -i libresteasy-java_3.0.6-2_all.deb
-  apt-get install -y glassfish-activation libhttpclient-java libjackson-json-java libjettison-java libscannotation-java libyaml-snake-java
-  # libjaxb-java 
-  wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/libjaxb-java_2.2.5-1_all.deb
-  dpkg -i libjaxb-java_2.2.5-1_all.deb
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/t/txw2/libtxw2-java_0.1+20110809-1_all.deb
-    dpkg -i libtxw2-java_0.1+20110809-1_all.deb
-      wget http://archive.ubuntu.com/ubuntu/pool/universe/a/args4j/libargs4j-java_2.0.30-1_all.deb
-      dpkg -i libargs4j-java_2.0.30-1_all.deb
-      default-jdk-doc
-        apt-get install openjdk-7-doc
-        librngom-javalibtxw2-java
-        wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rngom/librngom-java_0+201103+svn20110406-1_all.deb
-        dpkg -i librngom-java_0+201103+svn20110406-1_all.deb
-    librelaxngcc-java 
-      wget http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java_1.12-1_all.deb
-      wget http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java-doc_1.12-1_all.deb
-      dpkg -i librelaxngcc-java*
-    apt-get install -y libargs4j-java libcodemodel-java libdtd-parser-java libisorelax-java libistack-commons-java libjaxb-api-java libjing-java libmsv-java 
-    libfastinfoset-java 
-      wget http://archive.ubuntu.com/ubuntu/pool/universe/f/fastinfoset/libfastinfoset-java_1.2.12-1_all.deb
-      dpkg -i libfastinfoset-java_1.2.12-1_all.deb
-      apt-get install -y libstax-java libstreambuffer-java
-      libxsom-java
-        wget http://archive.ubuntu.com/ubuntu/pool/universe/x/xsom/libxsom-java_0+20110809-1_all.deb
-        libxsom-java_0+20110809-1_all.deb
-################################################################################
+apt-get remove -y selinux-policy-default
+
+apt-get install -y glassfish-activation libhttpclient-java libjackson-json-java libjettison-java libscannotation-java libyaml-snake-java \
+                   libargs4j-java libcodemodel-java libdtd-parser-java libisorelax-java libistack-commons-java libjaxb-api-java libjing-java libmsv-java \
+                   libstax-java libstreambuffer-java openjdk-7-doc
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rngom/librngom-java_0+201103+svn20110406-1_all.deb
+dpkg -i librngom-java_0+201103+svn20110406-1_all.deb
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/a/args4j/libargs4j-java_2.0.30-1_all.deb
+dpkg -i libargs4j-java_2.0.30-1_all.deb
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/x/xsom/libxsom-java_0+20110809-1_all.deb
+dpkg -i libxsom-java_0+20110809-1_all.deb
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/t/txw2/libtxw2-java_0.1+20110809-1_all.deb
+dpkg -i libtxw2-java_0.1+20110809-1_all.deb
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/f/fastinfoset/libfastinfoset-java_1.2.12-1_all.deb
+dpkg -i libfastinfoset-java_1.2.12-1_all.deb
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java_1.12-1_all.deb
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java-doc_1.12-1_all.deb
+dpkg -i librelaxngcc-java*
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/libjaxb-java_2.2.5-1_all.deb
+dpkg -i libjaxb-java_2.2.5-1_all.deb
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/libresteasy-java_3.0.6-2_all.deb
+dpkg -i libresteasy-java_3.0.6-2_all.deb
 
 # Build that stuff
 (cd /opt/local/src/dogtag/dogtag-pki-10.2.0/;  debian/rules binary)
@@ -83,12 +84,11 @@ apt-get install -y --force-yes     \
                    libcrypt-ssleay-perl \
                    python-ply-lex-3.2 javascript-common | tee install-deps
 
-# libjackson2-jaxrs-providers-java
-  wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-jaxrs-providers/libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
-  # libjackson2-module-jaxb-annotations-java
-  wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-module-jaxb-annotations/libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
-# python-cryptography
-# python-ndg-httpsclient
+wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-module-jaxb-annotations/libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
+dpkg -i libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-jaxrs-providers/libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
+dpkg -i libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
 
 # Install that stuff
 (
