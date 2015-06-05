@@ -1,0 +1,170 @@
+#!/bin/bash
+# vagrant init precise
+# vagrant up
+# vagrant ssh -- -A
+# sudo su -
+# wget --no-check-certificate -qO - https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/trusty | bash > jessie.out 2>&1
+
+apt-get update
+env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
+
+# CHANGE sources.list to trusty here...
+[ ! -f /etc/apt/sources.list.dist ] && cp /etc/apt/sources.list /etc/apt/sources.list.dist
+sed -e 's/#.*//g' -e 's/precise/trusty/g' /etc/apt/sources.list.dist | grep . > /etc/apt/sources.list
+apt-get update
+script
+
+env DEBIAN_FRONTEND=noninteractive \
+apt-get install -y \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                apache2-dev \
+                build-essential \
+                cmake \
+                debhelper \
+                default-jdk \
+                dh-systemd \
+                glassfish-activation \
+                javahelper \
+                javascript-common \
+                junit4 \
+                ldap-utils \
+                libargs4j-java \
+                libcodemodel-java \
+                libcommons-cli-java \
+                libcommons-codec-java \
+                libcommons-io-java \
+                libcommons-lang-java \
+                libcrypt-ssleay-perl \
+                libdtd-parser-java \
+                libhttpclient-java \
+                libidm-console-framework-java \
+                libisorelax-java \
+                libistack-commons-java \
+                libjackson-json-java \
+                libjackson2-annotations-java \
+                libjackson2-core-java \
+                libjackson2-databind-java \
+                libjackson2-dataformat-smile \
+                libjaxb-api-java \
+                libjettison-java \
+                libjing-java \
+                libjs-jquery \
+                libjs-underscore \
+                libjss-java \
+                libldap-java \
+                libldap2-dev \
+                libmsv-java \
+                libnspr4-dev \
+                libnss3-dev \
+                libnss3-tools \
+                libscannotation-java \
+                libservlet3.0-java \
+                libstax-java \
+                libstreambuffer-java \
+                libsvrcore-dev \
+                libtomcat7-java \
+                libtomcatjss-java \
+                libxalan2-java \
+                libxerces2-java \
+                libxml-perl \
+                libxslt1.1 \
+                libyaml-snake-java \
+                openjdk-7-doc \
+                pkg-config \
+                policycoreutils \
+                python-cffi \
+                python-dev \
+                python-ldap \
+                python-lxml \
+                python-openssl \
+                python-ply \
+                python-ply-lex-3.2 \
+                python-ply-yacc-3.2 \
+                python-pyasn1 \
+                python-pycparser \
+                python-requests \
+                python-urllib3 \
+                tomcat7-common \
+                tomcat7-user \
+                velocity \
+                zlib1g-dev
+
+# apt-get remove -y selinux-policy-default
+
+################################################################################
+# Get the stuff even trusty needs
+
+apt-get install -y librelaxng-datatype-java libstax-java
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rngom/librngom-java_0+201103+svn20110406-1_all.deb
+dpkg -i librngom-java_0+201103+svn20110406-1_all.deb || apt-get remove -y librngom-java
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/a/args4j/libargs4j-java_2.0.30-1_all.deb
+dpkg -i libargs4j-java_2.0.30-1_all.deb || apt-get remove -y libargs4j-java
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/x/xsom/libxsom-java_0+20110809-1_all.deb
+dpkg -i libxsom-java_0+20110809-1_all.deb || apt-get remove -y libxsom-java
+
+apt-get install -y ant libcodemodel-java
+wget http://archive.ubuntu.com/ubuntu/pool/universe/t/txw2/libtxw2-java_0.1+20110809-1_all.deb
+dpkg -i libtxw2-java_0.1+20110809-1_all.deb || apt-get remove -y libtxw2-java
+
+apt-get install -y libstreambuffer-java
+wget http://archive.ubuntu.com/ubuntu/pool/universe/f/fastinfoset/libfastinfoset-java_1.2.12-1_all.deb
+dpkg -i libfastinfoset-java_1.2.12-1_all.deb || apt-get remove -y libfastinfoset-java
+
+apt-get install -y libmsv-java
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java_1.12-1_all.deb
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java-doc_1.12-1_all.deb
+dpkg -i librelaxngcc-java* || apt-get remove -y librelaxngcc-java librelaxngcc-java-doc
+
+apt-get install -y libdom4j-java libdtd-parser-java libistack-commons-java libjaxb-api-java libjing-java
+wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/libjaxb-java_2.2.5-1_all.deb
+dpkg -i libjaxb-java_2.2.5-1_all.deb || apt-get remove -y libjaxb-java
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/libresteasy-java_3.0.6-2_all.deb
+dpkg -i libresteasy-java_3.0.6-2_all.deb || apt-get remove -y libresteasy-java
+
+apt-get install -y libjackson2-core-java libjackson2-databind-java libjackson2-annotations-java
+wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-module-jaxb-annotations/libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
+dpkg -i libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
+
+apt-get install -y libjackson2-dataformat-smile
+wget http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-jaxrs-providers/libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
+dpkg -i libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
+
+################################################################################
+
+# Put us back on precise
+cp /etc/apt/sources.list.dist /etc/apt/sources.list
+apt-get update
+
+# Get that stuff
+[ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
+[ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
+apt-get install -y dpkg-dev
+(
+  cd /opt/local/src/dogtag
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.dsc
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0.orig.tar.xz
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.debian.tar.xz
+  dpkg-source -x dogtag-pki_10.2.0-4.dsc
+)
+
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies:")
+# Build that stuff
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/;  debian/rules binary)
+(mv /opt/local/src/dogtag/*.deb /opt/local/pkg/dogtag)
+
+# Install that stuff
+(
+  cd /opt/local/pkg/dogtag/
+  dpkg -i pki-base_* || apt-get remove pki-base
+  dpkg -i dogtag-pki-console-theme* dogtag-pki-server-theme*
+  dpkg -i pki-console_* || apt-get -y remove pki-console
+  dpkg -i pki-tools* || apt-get -y remove pki-tools
+  dpkg -i pki-server* || apt-get -y remove pki-server
+  dpkg -i libsymkey-java* libsymkey-jni* pki-javadoc*
+  dpkg -i pki-tks* pki-tps* pki-ca* pki-kra* pki-ocsp*
+  dpkg -i dogtag-pki*
+)

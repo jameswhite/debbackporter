@@ -1,0 +1,133 @@
+#!/bin/bash
+[ ! -f /home/vagrant/.ssh/id_rsa ] && su - vagrant -c "ssh-keygen -t rsa -b4096 -f /home/vagrant/.ssh/id_rsa -N ''"
+mkdir -p /root/.ssh && chmod 750 /root/.ssh
+cp /home/vagrant/.ssh/id_rsa.pub /root/.ssh/authorized_keys
+
+(apt-get update)
+env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
+(apt-get install -y 389-ds)
+
+[ ! -f /etc/apt/sources.list.dist ] && cp /etc/apt/sources.list /etc/apt/sources.list.dist
+[ ! -f /etc/apt/sources.list.precise ] && cp /etc/apt/sources.list /etc/apt/sources.list.precise
+sed -e 's/#.*//g' -e 's/precise/trusty/g' /etc/apt/sources.list.dist | grep . > /etc/apt/sources.list
+
+(apt-get update)
+
+apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
+acl ant ant-optional at-spi2-core bsh ca-certificates-java colord dbus-x11     \
+dconf-gsettings-backend dconf-service default-jre default-jre-headless         \
+desktop-file-utils fontconfig fontconfig-config fonts-dejavu-core              \
+fonts-dejavu-extra fop gconf-service gconf-service-backend gconf2              \
+gconf2-common gdisk gir1.2-glib-2.0 glassfish-activation gvfs gvfs-common      \
+gvfs-daemons gvfs-libs hicolor-icon-theme init-system-helpers java-common      \
+java-wrappers junit junit4 ldap-utils libacl1 libantlr-java libapache-pom-java \
+libarchive-extract-perl libasm3-java libasound2 libasound2-data libasyncns0    \
+libatasmart4 libatinject-jsr330-api-java libatk-bridge2.0-0                    \
+libatk-wrapper-java libatk-wrapper-java-jni libatk1.0-0 libatk1.0-data         \
+libatspi2.0-0 libattr1 libauthen-sasl-perl libavahi-client3                    \
+libavahi-common-data libavahi-common3 libavahi-glib1 libavalon-framework-java  \
+libbatik-java libbonobo2-0 libbonobo2-common libbsf-java libbsh-java           \
+libc-dev-bin libc6 libc6-dev libcairo-gobject2 libcairo2 libcanberra0          \
+libcgmanager0 libclassworlds-java libcodemodel-java libcolord1 libcolorhug1    \
+libcommons-beanutils-java libcommons-cli-java libcommons-codec-java            \
+libcommons-collections3-java libcommons-configuration-java                     \
+libcommons-dbcp-java libcommons-digester-java libcommons-httpclient-java       \
+libcommons-io-java libcommons-jexl2-java libcommons-jxpath-java                \
+libcommons-lang-java libcommons-logging-java libcommons-net2-java              \
+libcommons-parent-java libcommons-pool-java libcommons-vfs-java                \
+libcrypt-ssleay-perl libcups2 libdatrie1 libdb5.3 libdconf1 libdom4j-java      \
+libdoxia-java libdrm-nouveau2 libdtd-parser-java libeasymock-java libecj-java  \
+libencode-locale-perl libexcalibur-logkit-java libexif12 libexpat1             \
+libfile-listing-perl libflac8 libfont-afm-perl libfontconfig1 libfontenc1      \
+libfop-java libganymed-ssh2-java libgconf-2-4 libgconf2-4 libgcrypt11 libgd3   \
+libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libgeronimo-jta-1.1-spec-java       \
+libgif4 libgirepository-1.0-1 libgl1-mesa-dri libgl1-mesa-glx libglapi-mesa    \
+libglib2.0-0 libgnome2-0 libgnome2-bin libgnome2-common libgnomevfs2-0         \
+libgnomevfs2-common libgnutls26 libgphoto2-6 libgphoto2-l10n libgphoto2-port10 \
+libgraphite2-3 libgtk-3-0 libgtk-3-bin libgtk-3-common libgtk2.0-0             \
+libgtk2.0-bin libgtk2.0-common libguava-java libgudev-1.0-0 libgusb2           \
+libhamcrest-java libharfbuzz0b libhtml-form-perl libhtml-format-perl           \
+libhtml-parser-perl libhtml-tagset-perl libhtml-tree-perl libhttp-cookies-perl \
+libhttp-daemon-perl libhttp-date-perl libhttp-message-perl                     \
+libhttp-negotiate-perl libhttpclient-java libhttpcore-java libice6 libicu52    \
+libidl-common libidl0 libidm-console-framework-java libieee1284-3              \
+libio-html-perl libio-socket-inet6-perl libio-socket-ssl-perl libisorelax-java \
+libistack-commons-java libitext1-java libjackson-json-java                     \
+libjackson2-annotations-java libjackson2-core-java libjackson2-databind-java   \
+libjackson2-dataformat-smile libjasper1 libjavassist-java libjaxb-api-java     \
+libjaxen-java libjaxp1.3-java libjbig0 libjdom1-java libjettison-java          \
+libjetty-java libjing-java libjline-java libjoda-convert-java                  \
+libjoda-time-java libjpeg-turbo8 libjpeg8 libjs-jquery libjs-underscore        \
+libjsch-java libjson-c2 libjson0 libjsoup-java libjsr305-java                  \
+libjsr311-api-java libjss-java libkmod2 liblcms2-2 libldap-2.4-2 libldap-java  \
+libllvm3.4 liblocale-gettext-perl liblog-message-simple-perl liblog4j1.2-java  \
+libltdl7 liblwp-mediatypes-perl liblwp-protocol-https-perl liblzma5            \
+libmailtools-perl libmaven-file-management-java libmaven-scm-java              \
+libmaven-shared-io-java libmaven2-core-java libmodello-java                    \
+libmodule-pluggable-perl libmsv-java libnet-http-perl libnet-smtp-ssl-perl     \
+libnet-ssleay-perl libnetbeans-cvsclient-java libnih-dbus1 libnih1 libnspr4    \
+libnss3 libnss3-nssdb libnss3-tools libogg0 liborbit-2-0 liborbit2 liboro-java \
+libpam-systemd libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0            \
+libpcsclite1 libpixman-1-0 libplexus-ant-factory-java libplexus-archiver-java  \
+libplexus-bsh-factory-java libplexus-build-api-java libplexus-cipher-java      \
+libplexus-classworlds-java libplexus-container-default-java                    \
+libplexus-containers-java libplexus-i18n-java libplexus-interactivity-api-java \
+libplexus-interpolation-java libplexus-io-java libplexus-sec-dispatcher-java   \
+libplexus-utils-java libplymouth2 libpod-latex-perl libpolkit-agent-1-0        \
+libpolkit-backend-1-0 libpolkit-gobject-1-0 libpulse0 libpython-stdlib         \
+libpython2.7-minimal libpython2.7-stdlib libregexp-java                        \
+librelaxng-datatype-java librhino-java libsane libsane-common libsaxon-java    \
+libsaxonhe-java libscannotation-java libsecret-1-0 libsecret-common            \
+libselinux1 libservlet2.5-java libservlet3.0-java libslf4j-java libsm6         \
+libsndfile1 libsocket6-perl libstax-ex-java libstax-java libstreambuffer-java  \
+libsub-name-perl libsystemd-daemon0 libsystemd-login0 libtasn1-6 libtdb1       \
+libterm-ui-perl libtext-charwidth-perl libtext-iconv-perl libtext-soundex-perl \
+libthai-data libthai0 libtiff5 libtomcat7-java libtomcatjss-java               \
+libtxc-dxtn-s2tc0 libudev1 libudisks2-0 liburi-perl libv4l-0 libv4lconvert0    \
+libvorbis0a libvorbisenc2 libvorbisfile3 libvpx1 libwagon-java                 \
+libwayland-client0 libwayland-cursor0 libwerken.xpath-java libwww-perl         \
+libwww-robotrules-perl libx11-6 libx11-xcb1 libxalan2-java libxaw7             \
+libxbean-java libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0          \
+libxcb-render0 libxcb-shape0 libxcb-shm0 libxcb-sync1 libxcb1 libxcomposite1   \
+libxcursor1 libxdamage1 libxerces2-java libxfixes3 libxft2 libxi6 libxinerama1 \
+libxkbcommon0 libxml-commons-external-java libxml-commons-resolver1.1-java     \
+libxml-parser-perl libxml-perl libxml2 libxmlgraphics-commons-java libxmu6     \
+libxom-java libxpm4 libxpp2-java libxpp3-java libxrandr2 libxrender1           \
+libxshmfence1 libxslt1.1 libxt6 libxtst6 libxv1 libxxf86dga1 libxxf86vm1       \
+libyaml-snake-java openjdk-7-jre openjdk-7-jre-headless perl perl-base         \
+perl-modules plymouth plymouth-theme-ubuntu-text policykit-1 policykit-1-gnome \
+python python-gi python-ldap python-lxml python-minimal python-requests        \
+python-selinux python-six python-urllib3 python2.7 python2.7-minimal rhino     \
+shared-mime-info sound-theme-freedesktop systemd-services systemd-shim sysv-rc \
+tomcat7-common tomcat7-user tzdata tzdata-java udev udisks2 unzip upstart      \
+velocity x11-common x11-utils
+
+(
+  cd /vagrant/dogtag
+  dpkg -i librngom-java_0+201103+svn20110406-1_all.deb || apt-get remove -y librngom-java
+  dpkg -i libargs4j-java_2.0.30-1_all.deb || apt-get remove -y libargs4j-java
+  dpkg -i libxsom-java_0+20110809-1_all.deb || apt-get remove -y libxsom-java
+  dpkg -i libtxw2-java_0.1+20110809-1_all.deb || apt-get remove -y libtxw2-java
+  dpkg -i libfastinfoset-java_1.2.12-1_all.deb || apt-get remove -y libfastinfoset-java
+  dpkg -i librelaxngcc-java* || apt-get remove -y librelaxngcc-java librelaxngcc-java-doc
+  dpkg -i libjaxb-java_2.2.5-1_all.deb || apt-get remove -y libjaxb-java
+  dpkg -i libresteasy-java_3.0.6-2_all.deb || apt-get remove -y libresteasy-java
+  dpkg -i libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
+  dpkg -i libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
+  cp /etc/apt/sources.list /etc/apt/sources.list.dist
+  dpkg -i pki-base_* || apt-get remove pki-base
+  dpkg -i dogtag-pki-console-theme* dogtag-pki-server-theme*
+  dpkg -i pki-console_* || apt-get -y remove pki-console
+  dpkg -i pki-tools* || apt-get -y remove pki-tools
+  dpkg -i pki-server* || apt-get -y remove pki-server
+  dpkg -i libsymkey-java* libsymkey-jni* pki-javadoc*
+  dpkg -i pki-tks* pki-tps* pki-ca* pki-kra* pki-ocsp*
+  dpkg -i dogtag-pki*
+)
+
+
+cp /etc/apt/sources.list.dist /etc/apt/sources.list
+(apt-get update)
+
+# /usr/sbin/setup-ds --keepcache
+
