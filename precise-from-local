@@ -1,0 +1,424 @@
+#!/bin/bash
+# vagrant init precise
+# vagrant up
+# vagrant ssh -- -A
+# sudo su -
+# wget --no-check-certificate -qO - https://gist.githubusercontent.com/jameswhite/5ef1524e5d99904a0e65/raw/trusty | bash > jessie.out 2>&1
+
+export REPO_ROOT="/srv/apt/ubuntu"
+
+apt-get update
+env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
+
+# CHANGE sources.list to trusty here...
+[ ! -f /etc/apt/sources.list.dist ] && cp /etc/apt/sources.list /etc/apt/sources.list.dist
+sed -e 's/#.*//g' -e 's/precise/trusty/g' /etc/apt/sources.list.dist | grep . > /etc/apt/sources.list
+apt-get update
+apt-get clean
+
+env DEBIAN_FRONTEND=noninteractive \
+apt-get install -y --download-only \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                apache2-dev \
+                build-essential \
+                cmake \
+                debhelper \
+                default-jdk \
+                dh-systemd \
+                glassfish-activation \
+                javahelper \
+                javascript-common \
+                junit4 \
+                ldap-utils \
+                libargs4j-java \
+                libcodemodel-java \
+                libcommons-cli-java \
+                libcommons-codec-java \
+                libcommons-io-java \
+                libcommons-lang-java \
+                libcrypt-ssleay-perl \
+                libdtd-parser-java \
+                libhttpclient-java \
+                libidm-console-framework-java \
+                libisorelax-java \
+                libistack-commons-java \
+                libjackson-json-java \
+                libjackson2-annotations-java \
+                libjackson2-core-java \
+                libjackson2-databind-java \
+                libjackson2-dataformat-smile \
+                libjaxb-api-java \
+                libjettison-java \
+                libjing-java \
+                libjs-jquery \
+                libjs-underscore \
+                libjss-java \
+                libldap-java \
+                libldap2-dev \
+                libmsv-java \
+                libnspr4-dev \
+                libnss3-dev \
+                libnss3-tools \
+                libscannotation-java \
+                libservlet3.0-java \
+                libstax-java \
+                libstreambuffer-java \
+                libsvrcore-dev \
+                libtomcat7-java \
+                libtomcatjss-java \
+                libxalan2-java \
+                libxerces2-java \
+                libxml-perl \
+                libxslt1.1 \
+                libyaml-snake-java \
+                openjdk-7-doc \
+                pkg-config \
+                policycoreutils \
+                python-cffi \
+                python-dev \
+                python-ldap \
+                python-lxml \
+                python-openssl \
+                python-ply \
+                python-ply-lex-3.2 \
+                python-ply-yacc-3.2 \
+                python-pyasn1 \
+                python-pycparser \
+                python-requests \
+                python-urllib3 \
+                tomcat7-common \
+                tomcat7-user \
+                velocity \
+                zlib1g-dev 389-admin 389-ds-base 389-ds-console selinux-policy-dev
+
+
+# Put the packages in their pool
+
+(
+  cd /var/cache/apt/archives
+  for pkg in $(ls *.deb);do
+    pkg_name=$(dpkg -I "${pkg}" | grep "^ Package: " | sed -e 's/^ Package: //')
+    pkg_version=$(dpkg -I "${pkg}" | grep "^ Version: " | sed -e 's/^ Version: //')
+    pkg_file=$(apt-cache show "${pkg_name}"="${pkg_version}" | grep "^Filename: " | sed -e 's/^Filename: //')
+    if [ ! -z "${pkg_file}" ]; then
+        pkg_dir="$(dirname "${pkg_file}")"
+        pkg_base="$(basename "${pkg_file}")"
+        if [ ! -d "${REPO_ROOT}/${pkg_dir}" ]; then mkdir -p "${REPO_ROOT}/${pkg_dir}"; fi
+        if [ ! -f "${REPO_ROOT}/${pkg_dir}/${pkg_base}" ]; then
+          cp "${pkg}" -p "${REPO_ROOT}/${pkg_dir}/${pkg_base}"
+          echo "${pkg} ->  ${pkg_dir}/${pkg_base}"
+        fi
+    else
+        echo "Could not determine the source for ${pkg}"
+    fi
+  done
+)
+
+################################################################################
+# Get the packages that are newer than trusty into the pool
+
+[ ! -d ${REPO_ROOT}/pool/universe/r/rngom/ ]  && mkdir -p ${REPO_ROOT}/pool/universe/r/rngom/
+wget -qO ${REPO_ROOT}/pool/universe/r/rngom/librngom-java_0+201103+svn20110406-1_all.deb                                       http://archive.ubuntu.com/ubuntu/pool/universe/r/rngom/librngom-java_0+201103+svn20110406-1_all.deb
+[ ! -d ${REPO_ROOT}/pool/universe/a/args4j/ ] && mkdir -p ${REPO_ROOT}/pool/universe/a/args4j/
+wget -qO ${REPO_ROOT}/pool/universe/a/args4j/libargs4j-java_2.0.30-1_all.deb                                                   http://archive.ubuntu.com/ubuntu/pool/universe/a/args4j/libargs4j-java_2.0.30-1_all.deb
+[ ! -d ${REPO_ROOT}/pool/universe/x/xsom/ ] && mkdir ${REPO_ROOT}/pool/universe/x/xsom/
+wget -qO ${REPO_ROOT}/pool/universe/x/xsom/libxsom-java_0+20110809-1_all.deb                                                   http://archive.ubuntu.com/ubuntu/pool/universe/x/xsom/libxsom-java_0+20110809-1_all.deb
+[ ! -d ${REPO_ROOT}/pool/universe/t/txw2/ ] && mkdir -p ${REPO_ROOT}/pool/universe/t/txw2/
+wget -qO ${REPO_ROOT}/pool/universe/t/txw2/libtxw2-java_0.1+20110809-1_all.deb                                                 http://archive.ubuntu.com/ubuntu/pool/universe/t/txw2/libtxw2-java_0.1+20110809-1_all.deb
+[ ! -d ${REPO_ROOT}/pool/universe/f/fastinfoset/ ] && mkdir -p ${REPO_ROOT}/pool/universe/f/fastinfoset/
+wget -qO ${REPO_ROOT}/pool/universe/f/fastinfoset/libfastinfoset-java_1.2.12-1_all.deb                                         http://archive.ubuntu.com/ubuntu/pool/universe/f/fastinfoset/libfastinfoset-java_1.2.12-1_all.deb
+[ ! -d  ${REPO_ROOT}/pool/universe/r/relaxngcc/ ] && mkdir -p ${REPO_ROOT}/pool/universe/r/relaxngcc/
+wget -qO ${REPO_ROOT}/pool/universe/r/relaxngcc/librelaxngcc-java_1.12-1_all.deb                                               http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java_1.12-1_all.deb
+wget -qO ${REPO_ROOT}/pool/universe/r/relaxngcc/librelaxngcc-java-doc_1.12-1_all.deb                                           http://archive.ubuntu.com/ubuntu/pool/universe/r/relaxngcc/librelaxngcc-java-doc_1.12-1_all.deb
+[ ! -d ${REPO_ROOT}/pool/universe/j/jaxb/ ] && mkdir -p ${REPO_ROOT}/pool/universe/j/jaxb/
+wget -qO ${REPO_ROOT}/pool/universe/j/jaxb/libjaxb-java_2.2.5-1_all.deb                                                        http://archive.ubuntu.com/ubuntu/pool/universe/j/jaxb/libjaxb-java_2.2.5-1_all.deb
+[ ! -d ${REPO_ROOT}/pool/universe/r/resteasy/ ] && mkdir -p ${REPO_ROOT}/pool/universe/r/resteasy/
+wget -qO ${REPO_ROOT}/pool/universe/r/resteasy/libresteasy-java_3.0.6-2_all.deb                                                http://archive.ubuntu.com/ubuntu/pool/universe/r/resteasy/libresteasy-java_3.0.6-2_all.deb
+[ ! -d ${REPO_ROOT}/pool/universe/j/jackson-module-jaxb-annotations/ ] && mkdir -p ${REPO_ROOT}/pool/universe/j/jackson-module-jaxb-annotations/
+wget -qO ${REPO_ROOT}/pool/universe/j/jackson-module-jaxb-annotations/libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-module-jaxb-annotations/libjackson2-module-jaxb-annotations-java_2.4.2-1_all.deb
+[ ! -d ${REPO_ROOT}/pool/universe/j/jackson-jaxrs-providers/ ] && mkdir -p ${REPO_ROOT}/pool/universe/j/jackson-jaxrs-providers/
+wget -qO ${REPO_ROOT}/pool/universe/j/jackson-jaxrs-providers/libjackson2-jaxrs-providers-java_2.4.2-1_all.deb                 http://archive.ubuntu.com/ubuntu/pool/universe/j/jackson-jaxrs-providers/libjackson2-jaxrs-providers-java_2.4.2-1_all.deb
+
+################################################################################
+# Put us back on precise
+cp /etc/apt/sources.list.dist /etc/apt/sources.list
+apt-get update
+
+################################################################################
+# repo-init
+if [ ! -f /etc/apt/sources.list.d/aptly.list ];then
+    echo "deb http://repo.aptly.info/ squeeze main" > /etc/apt/sources.list.d/aptly.list
+fi
+apt-key adv --keyserver keys.gnupg.net --recv-keys E083A3782A194991
+apt-get update
+apt-get install -y aptly rng-tools
+rngd -r /dev/urandom
+
+TMPFILE=$(mktemp /dev/shm/gpg-genkey.XXXXX)
+/bin/cat<<EOF >${TMPFILE}
+%echo Generating an encryption and Signing Key
+Key-Type: RSA
+Key-Length: 4096
+Subkey-Type: ELG-E
+Subkey-Length: 2048
+Name-Real:  "Precise Dogtag Repository Signing Key"
+Name-Email: security+pki@github.com
+Expire-Date: 2020-08-20
+# Passphrase: 'bobloblawslawblog'
+%commit
+%echo Done
+EOF
+umask ${PREUMSK}
+gpg --batch --gen-key ${TMPFILE} > /var/log/gpg-keygen.log 2> /var/log/gpg-keygen_error.log
+rm ${TMPFILE}
+
+
+cat<<EOF > /root/.aptly.conf
+{
+  "rootDir": "/data/aptly",
+  "downloadConcurrency": 4,
+  "downloadSpeedLimit": 0,
+  "architectures": [],
+  "dependencyFollowSuggests": false,
+  "dependencyFollowRecommends": false,
+  "dependencyFollowAllVariants": false,
+  "dependencyFollowSource": false,
+  "gpgDisableSign": false,
+  "gpgDisableVerify": false,
+  "downloadSourcePackages": false,
+  "ppaDistributorID": "ubuntu",
+  "ppaCodename": "",
+  "S3PublishEndpoints": {},
+  "SwiftPublishEndpoints": {}
+}
+EOF
+
+[ ! -d /data/aptly ] && mkdir -p /data/aptly
+aptly repo create -distribution="precise-dogtag" precise-dogtag
+aptly repo add precise-dogtag /srv/apt/ubuntu/pool
+aptly snapshot create precise-dogtag-$(date +"%Y%m%d")a from repo precise-dogtag
+aptly publish snapshot precise-dogtag-$(date +"%Y%m%d")a dogtag-build-deps
+[ ! -f /etc/apt/sources.list.d/precise-dogtag.list ] && echo "deb [arch=amd64] file:/data/aptly/public/dogtag-build-deps precise-dogtag main" > /etc/apt/sources.list.d/precise-dogtag.list
+
+gpg --export -a | sudo apt-key add -
+apt-get update
+
+################################################################################
+# we need to sign the repository or -y --force-yes are necessary here.
+env DEBIAN_FRONTEND=noninteractive \
+apt-get install -y --force-yes \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                apache2-dev \
+                build-essential \
+                cmake \
+                debhelper \
+                default-jdk \
+                dh-systemd \
+                dpkg-dev \
+                glassfish-activation \
+                javahelper \
+                javascript-common \
+                junit4 \
+                ldap-utils \
+                libargs4j-java \
+                libcodemodel-java \
+                libcommons-cli-java \
+                libcommons-codec-java \
+                libcommons-io-java \
+                libcommons-lang-java \
+                libcrypt-ssleay-perl \
+                libdtd-parser-java \
+                libhttpclient-java \
+                libidm-console-framework-java \
+                libisorelax-java \
+                libistack-commons-java \
+                libjackson-json-java \
+                libjackson2-annotations-java \
+                libjackson2-core-java \
+                libjackson2-databind-java \
+                libjackson2-dataformat-smile \
+                libjaxb-api-java \
+                libjettison-java \
+                libjing-java \
+                libjs-jquery \
+                libjs-underscore \
+                libjss-java \
+                libldap-java \
+                libldap2-dev \
+                libmsv-java \
+                libnspr4-dev \
+                libnss3-dev \
+                libnss3-tools \
+                libscannotation-java \
+                libservlet3.0-java \
+                libstax-java \
+                libstreambuffer-java \
+                libsvrcore-dev \
+                libtomcat7-java \
+                libtomcatjss-java \
+                libxalan2-java \
+                libxerces2-java \
+                libxml-perl \
+                libxslt1.1 \
+                libyaml-snake-java \
+                openjdk-7-doc \
+                pkg-config \
+                policycoreutils \
+                python-cffi \
+                python-dev \
+                python-ldap \
+                python-lxml \
+                python-openssl \
+                python-ply \
+                python-ply-lex-3.2 \
+                python-ply-yacc-3.2 \
+                python-pyasn1 \
+                python-pycparser \
+                python-requests \
+                python-urllib3 \
+                tomcat7-common \
+                tomcat7-user \
+                velocity \
+                zlib1g-dev \
+                librngom-java \
+                libargs4j-java \
+                libxsom-java \
+                libtxw2-java \
+                libfastinfoset-java \
+                librelaxngcc-java \
+                librelaxngcc-java-doc \
+                libjaxb-java \
+                libresteasy-java \
+                libjackson2-module-jaxb-annotations-java \
+                libjackson2-jaxrs-providers-java 389-admin 389-ds-base 389-ds-console selinux-policy-dev
+
+
+################################################################################
+# Get that stuff
+[ ! -d /opt/local/pkg/dogtag ] && mkdir -p /opt/local/pkg/dogtag
+[ ! -d /opt/local/src/dogtag ] && mkdir -p /opt/local/src/dogtag
+(
+  cd /opt/local/src/dogtag
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.dsc
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0.orig.tar.xz
+  wget http://ftp.de.debian.org/debian/pool/main/d/dogtag-pki/dogtag-pki_10.2.0-4.debian.tar.xz
+  dpkg-source -x dogtag-pki_10.2.0-4.dsc
+)
+
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/; dpkg-checkbuilddeps 2>&1 | grep "Unmet build dependencies:")
+# Build that stuff
+(cd /opt/local/src/dogtag/dogtag-pki-10.2.0/;  debian/rules binary)
+
+# Move to our aptly tree
+aptly repo add precise-dogtag /opt/local/src/dogtag/
+apt-get update
+
+aptly repo add precise-dogtag ${REPO_ROOT}
+aptly snapshot create precise-dogtag-$(date +"%Y%m%d")b from repo precise-dogtag
+aptly publish snapshot precise-dogtag-$(date +"%Y%m%d")b precise-dogtag
+
+# Use the aptly tree to construct the apt-ftparchive tree
+(
+  cd /opt/local/src/dogtag
+  for pkg in $(ls *.deb);do
+    pkg_name=$(dpkg -I "${pkg}" | grep "^ Package: " | sed -e 's/^ Package: //')
+    pkg_version=$(dpkg -I "${pkg}" | grep "^ Version: " | sed -e 's/^ Version: //')
+    pkg_file=$(apt-cache show "${pkg_name}"="${pkg_version}" | grep "^Filename: " | sed -e 's/^Filename: //')
+    if [ ! -z "${pkg_file}" ]; then
+        pkg_dir="$(dirname "${pkg_file}")"
+        pkg_base="$(basename "${pkg_file}")"
+        if [ ! -d "${REPO_ROOT}/${pkg_dir}" ]; then mkdir -p "${REPO_ROOT}/${pkg_dir}"; fi
+        if [ ! -f "${REPO_ROOT}/${pkg_dir}/${pkg_base}" ]; then
+          cp "${pkg}" -p "${REPO_ROOT}/${pkg_dir}/${pkg_base}"
+          echo "${pkg} ->  ${pkg_dir}/${pkg_base}"
+        fi
+    else
+        echo "Could not determine the source for ${pkg}"
+    fi
+  done
+)
+
+rsync -avzPC --delete $REPO_ROOT/  /vagrant/apt/ubuntu/
+
+################################################################################
+# Create the repo on the non-vagrant side
+#
+# aptly publish drop precise
+# aptly snapshot drop precise-dogtag-20150727
+# aptly repo drop precise-dogtag
+#
+# export VAGRANT_ROOT="/Users/jameswhite/boxes/05_boron/"
+# aptly repo create precise-dogtag
+# aptly repo add precise-dogtag ${VAGRANT_ROOT}/apt/ubuntu/
+# aptly snapshot create precise-dogtag-$(date +"%Y%m%d") from repo precise-dogtag
+# aptly publish snapshot --distribution="precise" precise-dogtag-$(date +"%Y%m%d") precise-dogtag
+# (cd ${VAGRANT_ROOT} ; gpg --export -a > gpg.key)
+#
+# Destroy the node
+#   vagrant destroy --force
+# rebuild with:
+#   vagrant up
+#
+# vagrant ssh -- -A
+# sudo su -
+################################################################################
+apt-get update
+env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --force-yes -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold"
+
+# Jesus, why does this have to be done first?
+# sudo apt-get install -y 389-admin 389-ds-base 389-ds-console
+
+cat /vagrant/gpg.key | apt-key add -
+echo "deb [arch=amd64] file:/vagrant/aptly/public/precise-dogtag precise main" > /etc/apt/sources.list.d/precise-dogtag.list
+apt-get update
+env DEBIAN_FRONTEND=noninteractive apt-get install -y -oDpkg::Options::="--force-confdef" -oDpkg::Options::="--force-confold" 389-ds-base dogtag-pki
+
+echo 60 > /proc/sys/net/ipv4/tcp_keepalive_time
+sysctl -w fs.file-max=100000
+echo "fs.file-max = 100000" >> /etc/sysctl.conf
+sysctl -p
+sed -i -e 's/# End of file/*                soft    nofile          4096\n*                hard    nofile          10240\n# End of File/' /etc/security/limits.conf
+ulimit -Hn 10240
+ulimit -Sn 4096
+
+# setup-ds --keepcache
+
+cat<<EOF > setup.inf
+[General]
+FullMachineName = precise64.bs.wcyd.org
+ServerRoot = /usr/lib/x86_64-linux-gnu/dirsrv
+SuiteSpotGroup = dirsrv
+SuiteSpotUserID = dirsrv
+[slapd]
+AddOrgEntries = Yes
+AddSampleEntries = No
+HashedRootDNPwd = {SSHA}4itT6g4+f2JbkIOl78Frklgwn7R6WulJcJjrBw==
+InstallLdifFile = suggest
+RootDN = cn=Directory Manager
+RootDNPwd = GitHub3.14159
+ServerIdentifier = precise64
+ServerPort = 389
+Suffix = dc=bs,dc=wcyd,dc=org
+bak_dir = /var/lib/dirsrv/slapd-precise64/bak
+bindir = /usr/bin
+cert_dir = /etc/dirsrv/slapd-precise64
+config_dir = /etc/dirsrv/slapd-precise64
+datadir = /usr/share
+db_dir = /var/lib/dirsrv/slapd-precise64/db
+ds_bename = userRoot
+inst_dir = /usr/lib/x86_64-linux-gnu/dirsrv/slapd-precise64
+ldif_dir = /var/lib/dirsrv/slapd-precise64/ldif
+localstatedir = /var
+lock_dir = /var/lock/dirsrv/slapd-precise64
+log_dir = /var/log/dirsrv/slapd-precise64
+naming_value = bs
+run_dir = /var/run/dirsrv
+sbindir = /usr/sbin
+schema_dir = /etc/dirsrv/slapd-precise64/schema
+sysconfdir = /etc
+tmp_dir = /tmp
+EOF
+
+setup-ds --silent --file=setup.inf
