@@ -90,7 +90,7 @@ apt-get install -y --download-only \
                 tomcat7-common \
                 tomcat7-user \
                 velocity \
-                zlib1g-dev 389-admin 389-ds-base 389-ds-console selinux-policy-dev
+                zlib1g-dev 389-admin 389-ds-base 389-ds-console selinux-policy-dev libselinux1
 
 
 # Put the packages in their pool
@@ -292,7 +292,7 @@ apt-get install -y --force-yes \
                 libjaxb-java \
                 libresteasy-java \
                 libjackson2-module-jaxb-annotations-java \
-                libjackson2-jaxrs-providers-java 389-admin 389-ds-base 389-ds-console selinux-policy-dev
+                libjackson2-jaxrs-providers-java 389-admin 389-ds-base 389-ds-console selinux-policy-dev libselinux1
 
 
 ################################################################################
@@ -318,6 +318,11 @@ apt-get update
 aptly repo add precise-dogtag ${REPO_ROOT}
 aptly snapshot create precise-dogtag-$(date +"%Y%m%d")b from repo precise-dogtag
 aptly publish snapshot precise-dogtag-$(date +"%Y%m%d")b precise-dogtag
+
+echo "deb [arch=amd64] file:/data/aptly/public/precise-dogtag precise-dogtag main" > /etc/apt/sources.list.d/precise-dogtag.list
+apt-get clean
+apt-get update
+
 
 # Use the aptly tree to construct the apt-ftparchive tree
 (
@@ -345,7 +350,7 @@ rsync -avzPC --delete $REPO_ROOT/  /vagrant/apt/ubuntu/
 ################################################################################
 # Create the repo on the non-vagrant side
 #
-# aptly publish drop precise
+# aptly publish drop precise-dogtag
 # aptly snapshot drop precise-dogtag-20150727
 # aptly repo drop precise-dogtag
 #
@@ -422,3 +427,6 @@ tmp_dir = /tmp
 EOF
 
 setup-ds --silent --file=setup.inf
+
+
+
